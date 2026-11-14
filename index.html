@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#123b35"><link rel="manifest" href="manifest.webmanifest"><title>AIC · Circuito Córdoba</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="login" class="login-screen">
+    <div class="login-language"><span>ES</span><button class="lang-toggle" id="loginLang" aria-label="Change language">EN</button></div>
+    <div class="login-mark" aria-hidden="true"><img class="seal-logo" src="Logo.png" alt=""><span>ASAMBLEA DE IGLESIAS CRISTIANAS<br>CONCILIO · AIC</span></div>
+    <section class="login-card">
+      <div class="eyebrow" data-i18n="welcome">CIRCUITO CÓRDOBA</div><h1 data-i18n="signIn">Bienvenido</h1><p class="muted" data-i18n="signHint">Ingresa tus credenciales para continuar.</p>
+      <form id="loginForm"><label data-i18n="userLabel">Usuario</label><input id="userInput" required placeholder="Tu usuario" autocomplete="username"><label data-i18n="passwordLabel">Contraseña</label><div class="password-wrap"><input id="passInput" type="password" required placeholder="••••••••" autocomplete="current-password"><button type="button" class="eye" id="togglePass" aria-label="Mostrar contraseña">◉</button></div><button class="primary full" type="submit" data-i18n="enter">Ingresar <span>→</span></button></form>
+      <div class="demo-area"><div class="demo-title" data-i18n="previewRole">Vista de demostración por rol</div><div class="role-pills"><button data-role="presbitero">Presbítero</button><button data-role="tesorero">Tesorero</button><button data-role="secretario">Secretario</button><button data-role="pastor">Pastor</button><button data-role="maestro">Maestro ITAIC</button><button data-role="itaic">Administrador ITAIC</button></div></div>
+    </section>
+    <blockquote id="verse" class="verse"><span>“</span><p>Todo lo que hagan, háganlo de corazón, como para el Señor.</p><cite>Colosenses 3:23</cite></blockquote>
+    <div class="login-foot">© AIC · Circuito Córdoba</div>
+  </main>
+  <div id="app" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar"><div class="brand"><img class="brand-icon" src="Logo.png" alt="AIC"><div><b>AIC</b><small>Circuito Córdoba</small></div></div><div class="side-label" data-i18n="workspace">ESPACIO DE TRABAJO</div><nav id="navigation"></nav><div class="side-bottom"><div class="help-card"><div class="help-icon">✦</div><b data-i18n="helpTitle">¿Necesitas ayuda?</b><small data-i18n="helpText">Consulta con el administrador del circuito.</small></div><button id="logout" class="logout"><span>↪</span><span data-i18n="logout">Cerrar sesión</span></button></div></aside>
+    <section class="main-area"><header class="topbar"><button class="mobile-menu" id="mobileMenu">☰</button><div class="crumb" id="breadcrumb">Panel general</div><div class="top-actions"><button class="icon-button" id="langToggle">ES</button><span class="top-divider"></span><div class="user-chip"><div class="avatar" id="avatar">P</div><div><b id="userName">Presbítero</b><small id="userRole">Administrador</small></div><span class="chevron">⌄</span></div></div></header><main class="content" id="content"></main></section>
+  </div>
+  <div id="modalRoot"></div><div id="toast" class="toast"></div>
+  <script src="report-logo.js"></script><script src="app.js"></script>
+</body>
+</html>
