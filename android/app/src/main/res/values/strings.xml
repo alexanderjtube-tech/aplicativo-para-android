@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AIC Córdoba</string>
+    <string name="title_activity_main">AIC Córdoba</string>
+    <string name="package_name">co.aic.circuitocordoba</string>
+    <string name="custom_url_scheme">co.aic.circuitocordoba</string>
+</resources>

@@ -1,0 +1,28 @@
+{
+  "name": "AIC · Circuito Córdoba",
+  "short_name": "AIC Córdoba",
+  "description": "Administración del Circuito Córdoba de la Asamblea de Iglesias Cristianas.",
+  "lang": "es-CO",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f9f7",
+  "theme_color": "#123b35",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

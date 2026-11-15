@@ -1,0 +1,7 @@
+/* Impresión / PDF dentro de la app Android */
+#nativePrintHost{display:none}
+@media print{
+  @page{margin:15mm}
+  body.native-print-report > *:not(#nativePrintHost){display:none!important}
+  body.native-print-report #nativePrintHost{display:block!important}
+}
