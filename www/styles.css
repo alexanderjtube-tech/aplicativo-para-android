@@ -11,3 +11,58 @@
 .teacher-course{margin-bottom:13px}.grade-progress{display:grid;grid-template-columns:1fr auto;gap:7px 12px;align-items:center;color:#71817a;font-size:10px}.grade-progress b{color:var(--green);font-size:12px}.progress-track{grid-column:1 / -1;height:5px;background:#edf2ee;border-radius:10px;overflow:hidden}.progress-track i{height:100%;display:block;background:#4c8b70;border-radius:10px}.grade-progress small{grid-column:1 / -1;color:#94a099}.grade-input{width:65px;border:1px solid var(--line);border-radius:7px;padding:7px 6px;font-size:11px;outline:none}.grade-input:focus{border-color:#609487;box-shadow:0 0 0 2px #23645612}.weight-label,.student-meta{display:block;font-size:9px;color:#8b9992;font-weight:400;margin-top:4px}.grade-table td{vertical-align:middle}.grade-table th{vertical-align:top}.grade-table{min-width:660px}.role-pills button:last-child{border-color:#d4e3db;color:var(--green)}
 
 .report-modal{width:min(100%,850px);max-height:90vh;overflow:auto}.report-letterhead{display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--green);padding:0 0 13px;margin-bottom:18px}.report-letterhead b{display:block;font-size:13px}.report-letterhead span{display:block;font-size:11px;color:#71817a;margin-top:4px}.report-seal{width:43px;height:43px;display:grid;place-items:center;border-radius:50%;background:#174b41;color:white;font:800 12px Manrope}.formal-report h1{font:700 20px Manrope;margin:14px 0 6px}.report-date{font-size:10px;color:#71817a}.formal-table{border-collapse:collapse;width:100%;font-size:10px}.formal-table td,.formal-table th{border:1px solid #dfe7e2;padding:8px;text-align:left}.formal-table th{background:#f3f7f4;color:#41564c}.formal-report footer{margin-top:25px;border-top:1px solid var(--line);padding-top:9px;color:#71817a;font-size:9px}.report-actions{position:sticky;bottom:-24px;background:white;padding:14px 0 0}.report-modal .formal-report{max-height:48vh;overflow:auto}
+
+/* ===== Ajustes responsive (móvil) ===== */
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:hidden}
+.main-area,.content{min-width:0;max-width:100%}
+.summary-band{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.summary-band>div{min-width:0}
+.summary-band b{overflow-wrap:anywhere}
+.data-table.compact{min-width:0}
+
+@media(max-width:980px){
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:700px){
+  /* Nada debe ensanchar la pantalla: las tablas anchas se desplazan dentro de su tarjeta */
+  .content>*,.grid-2>*,.panel,.stat-card,.table-card{min-width:0;max-width:100%}
+  .grid-2{grid-template-columns:minmax(0,1fr)}
+  .panel{padding:16px 14px}
+  .panel-head{flex-wrap:wrap;gap:10px}
+  .page-head{gap:12px}
+  .page-head>div{min-width:0;max-width:100%}
+  .head-actions{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+  .head-actions>button{flex:1 1 auto}
+  .crumb{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stat-value{overflow-wrap:anywhere}
+  .table-tools{flex-wrap:wrap}
+
+  /* Barra de resumen de finanzas: 2 columnas */
+  .summary-band{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 0;padding:12px 8px}
+  .summary-band>div{padding:0 10px;border-left:0}
+  .summary-band>div:nth-child(even){border-left:1px solid #dfe8e2}
+  .summary-band>div:nth-child(n+3){border-top:1px solid #dfe8e2;padding-top:12px}
+  .summary-band b{font-size:15px}
+
+  /* Ventanas flotantes (incluida la de informes) */
+  .modal-backdrop{padding:10px}
+  .modal{padding:18px;max-height:calc(100vh - 20px);max-height:calc(100dvh - 20px);overflow-y:auto}
+  .modal-grid{grid-template-columns:minmax(0,1fr)}
+  .modal-actions{flex-wrap:wrap}
+  .report-modal{width:100%}
+  .report-actions{bottom:-18px;gap:8px}
+  .report-actions>button{flex:1 1 30%}
+  .report-modal .formal-report{max-height:55vh}
+  .report-letterhead{flex-wrap:wrap}
+
+  /* Login: que la tarjeta no se monte con el logo ni el versículo en pantallas bajas */
+  .login-screen{min-height:100vh;min-height:100dvh;padding:86px 0 120px}
+}
+
+@media(max-width:360px){
+  .content{padding:20px 12px 34px}
+  .page-head h1{font-size:21px}
+  .summary-band b{font-size:14px}
+}
