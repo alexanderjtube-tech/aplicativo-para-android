@@ -66,3 +66,9 @@ body{overflow-x:hidden}
   .page-head h1{font-size:21px}
   .summary-band b{font-size:14px}
 }
+
+/* ===== ITAIC: materias y valores de referencia ===== */
+.subject-year{padding-top:8px;margin-top:8px;border-top:1px solid #e3ebe6}
+.subject-year:first-of-type{border-top:0;margin-top:0}
+.church-row .grade-input{width:76px}
+@media(max-width:700px){.church-row .grade-input{width:64px}}
