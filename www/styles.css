@@ -85,3 +85,18 @@ body{overflow-x:hidden}
 .drill-item{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:11px;padding:7px 9px;background:var(--pale);border-radius:8px}
 .drill-item span:nth-child(2){color:var(--muted);overflow-wrap:anywhere}
 .reset-data{display:block;margin:14px auto 0;font-size:11px;color:var(--muted)}
+
+/* ===== Entrega 4: periodos, historial, solicitudes ===== */
+.notice{background:#fff8ea;border:1px solid #f0dfb8;color:#6b5420;border-radius:10px;padding:11px 13px;font-size:11px;margin:0 0 12px}
+.period-panel .church-row{flex-wrap:wrap}
+.period-panel .church-row>div:nth-child(2){flex:1 1 180px;min-width:0}
+.tx-actions{white-space:nowrap;text-align:right}
+.modal .summary-band{margin:10px 0}
+textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;font-size:12px;resize:vertical}
+
+/* ===== Entrega 5: cierres del circuito ===== */
+.circuit-panel .church-row{flex-wrap:wrap}
+.circuit-panel .church-row>div:nth-child(2){flex:1 1 180px;min-width:0}
+.test-tools{margin-top:14px;border:1px dashed var(--line);border-radius:10px;padding:10px 12px}
+.test-tools summary{cursor:pointer;font-size:11px;font-weight:700;color:var(--muted)}
+.test-tools p{font-size:11px;margin:8px 0}
