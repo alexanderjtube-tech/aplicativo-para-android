@@ -2,8 +2,8 @@
  * Puente entre la web y la app Android (Capacitor).
  * - En un navegador normal NO hace nada (la web funciona igual que antes).
  * - Dentro de la app Android:
- *     · Las descargas (CSV, Excel .xls, Word .doc) se guardan y se abren con el menú
- *       "Compartir" de Android (guardar en Drive, WhatsApp, correo, etc.).
+ *     · Las descargas (CSV, Excel .xls, Word .doc) se guardan directamente en la carpeta
+ *       Descargas del celular. Si eso no es posible, se abre el menú "Compartir" de Android.
  *     · "Guardar como PDF" / imprimir usa el diálogo nativo de impresión de Android.
  */
 (function () {
@@ -73,10 +73,45 @@
       });
   }
 
+  var MIME_BY_EXT = {
+    doc: 'application/msword',
+    xls: 'application/vnd.ms-excel',
+    csv: 'text/csv',
+    pdf: 'application/pdf',
+    html: 'text/html',
+    txt: 'text/plain'
+  };
+
+  function guessMime(name, blob) {
+    if (blob && blob.type) return blob.type;
+    var m = /\.([a-z0-9]+)$/i.exec(String(name || ''));
+    return (m && MIME_BY_EXT[m[1].toLowerCase()]) || 'application/octet-stream';
+  }
+
+  // Guarda directamente en Descargas; si no se puede, usa el menú de compartir como respaldo.
+  function saveDownload(blob, fileName) {
+    var safeName = String(fileName || 'archivo').replace(/[\\/:*?"<>|]+/g, '-');
+    return blobToBase64(blob)
+      .then(function (data) {
+        return plugin('NativePrint').saveToDownloads({
+          fileName: safeName,
+          mimeType: guessMime(safeName, blob),
+          data: data
+        });
+      })
+      .then(function () {
+        say('Guardado en Descargas: ' + safeName);
+      })
+      .catch(function (err) {
+        console.warn('No se pudo guardar en Descargas, se usa Compartir:', err);
+        return saveAndShare(blob, fileName);
+      });
+  }
+
   var nativeAnchorClick = HTMLAnchorElement.prototype.click;
   HTMLAnchorElement.prototype.click = function () {
     if (this.hasAttribute('download') && blobs.has(this.href)) {
-      saveAndShare(blobs.get(this.href), this.getAttribute('download'));
+      saveDownload(blobs.get(this.href), this.getAttribute('download'));
       return;
     }
     return nativeAnchorClick.apply(this, arguments);
@@ -87,7 +122,7 @@
     var a = ev.target && ev.target.closest ? ev.target.closest('a[download]') : null;
     if (a && blobs.has(a.href)) {
       ev.preventDefault();
-      saveAndShare(blobs.get(a.href), a.getAttribute('download'));
+      saveDownload(blobs.get(a.href), a.getAttribute('download'));
     }
   }, true);
 

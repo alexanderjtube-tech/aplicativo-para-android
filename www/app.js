@@ -30,10 +30,10 @@ function memberRows(){let data=members.filter(m=>`${m.name} ${m.id}`.toLowerCase
 function secretaryPage(){let baptized=members.filter(m=>m.baptized).length,women=members.filter(m=>m.sex==='Femenino').length,children=members.filter(m=>m.age<13).length;return `${pageHead(t('secretary'),t('secretarySubtitle'),`<button class="primary" data-do="report">${t('generate')} →</button>`)}${stats([['♙',t('totalMembers'),role==='pastor'?members.length:'1,246',t('registered')],['✧',t('baptized'),role==='pastor'?baptized:'918',`${role==='pastor'?Math.round(baptized/Math.max(1,members.length)*100):74}%`],['♀',t('women'),role==='pastor'?women:'698',t('women')],['♧',t('children'),role==='pastor'?children:'184',lang==='es'?'menores de 13 años':'under 13 years']])}${assocBar()}<section class="table-card"><div class="table-tools"><div class="search"><input id="memberSearch" placeholder="${t('search')}" value="${filter}"></div><select class="filter"><option>${t('allChurches')}</option>${churches.map(c=>`<option>${c[0]}</option>`).join('')}</select>${role==='pastor'?`<button class="primary" data-modal="member">＋ ${t('addMember')}</button>`:''}</div><table class="data-table"><thead><tr><th>${t('member')}</th><th>${t('document')}</th><th>${t('age')}</th><th>${t('sex')}</th><th>${t('civil')}</th><th>${L('Asociación','Association')}</th><th>${t('baptism')}</th><th></th></tr></thead><tbody id="memberRows">${memberRows()}</tbody></table><div class="table-foot">${members.length} ${t('registered').toLowerCase()}</div></section>`}
 function simplePage(which){let title=t(which),sub=t(which+'Subtitle')||t('itaicSubtitle'),students=which==='itaic';return `${pageHead(title,sub,students?`<button class="secondary" data-export="students">${t('generate')} →</button>`:`<button class="primary" data-modal="pastor">＋ ${t('newPastor')}</button>`)}${students?`<div class="stats-grid">${[['▣',t('students'),'48',lang==='es'?'matriculados actualmente':'currently enrolled'],['⌂',t('campuses'),'4',lang==='es'?'sedes activas':'active campuses'],['♙',t('teachersTitle'),'12',lang==='es'?'maestros asignados':'assigned teachers'],['✧',t('churches'),'9',lang==='es'?'iglesias participantes':'participating churches']].map(a=>`<article class="stat-card"><div class="stat-top"><span>${a[1]}</span><span class="stat-icon">${a[0]}</span></div><div class="stat-value">${a[2]}</div><div class="stat-note">${a[3]}</div></article>`).join('')}</div><div class="toolbar" style="margin-bottom:16px"><button class="secondary">${t('all')} · 48</button><button class="secondary">${t('year1')} · 19</button><button class="secondary">${t('year2')} · 16</button><button class="secondary">${t('year3')} · 13</button><button class="secondary">⌄ ${t('churchLabel')}</button><button class="secondary">⌄ ${t('campuses')}</button></div><div class="grid-2">${[['Primer año','19','Sede Central'],['Segundo año','16','Sede Betania'],['Tercer año','13','Sede Central']].map(a=>`<section class="panel"><div class="panel-head"><div><h2>${lang==='en'?({ 'Primer año':'First year','Segundo año':'Second year','Tercer año':'Third year'}[a[0]]):a[0]}</h2><p>${a[1]} ${t('students').toLowerCase()} · ${a[2]}</p></div><button class="text-link">${t('viewAll')} →</button></div><div class="church-row"><div class="church-emblem">♙</div><div><b>${a[0]==='Primer año'?'María Gómez':a[0]==='Segundo año'?'José Torres':'Lucía Díaz'}</b><small>Iglesia Central</small></div><div class="row-end"><b>4.6</b><small>${t('grades')}</small></div></div><div class="church-row"><div class="church-emblem">♙</div><div><b>${a[0]==='Primer año'?'David López':'Ana Martínez'}</b><small>Iglesia Betania</small></div><div class="row-end"><b>4.2</b><small>${t('grades')}</small></div></div></section>`).join('')}</div><section class="panel"><div class="panel-head"><div><h2>${t('teachersTitle')}</h2><p>${lang==='es'?'Maestros asignados por sede y año':'Teachers assigned by campus and year'}</p></div><button class="secondary" data-modal="teacher">＋ ${t('teachers')}</button></div><div class="church-row"><div class="church-emblem">♙</div><div><b>Pr. José Martínez</b><small>Sede Central · ${t('year1')} y ${t('year2')}</small></div></div><div class="church-row"><div class="church-emblem">♙</div><div><b>Ana Lucía Ríos</b><small>Sede Betania · ${t('year3')}</small></div></div></section>`:`<section class="panel"><div class="panel-head"><div><h2>${t('pastors')}</h2><p>4 ${t('pastors').toLowerCase()} · Circuito Córdoba</p></div></div>${churches.map(c=>`<div class="church-row"><div class="church-emblem">♙</div><div><b>${c[2]}</b><small>${c[0]} · ${lang==='es'?'Preparación: Instituto bíblico':'Education: Bible institute'}</small></div>${role==='presbitero'?`<button class="inline-actions" data-it3="editPastor|${churches.indexOf(c)}" title="${L('Editar','Edit')}">✎</button>`:''}</div>`).join('')}</section>`}`}
 function renderPage(){let title=navInfo[page]?t(navInfo[page][1]):t('dashboard');$('#breadcrumb').textContent=title;$('#content').innerHTML=page==='dashboard'?dashboard():page==='churches'?churchPage():page==='finance'?financePage():page==='secretary'||page==='members'?secretaryPage():page==='itaic'||page==='pastors'?simplePage(page):page==='teachers'?simplePage('itaic'):`<div class="empty">${t('noAccess')}</div>`;bindPage()}
-function baseBindPage(){document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$$('[data-go]').forEach(b=>b.onclick=()=>{page=b.dataset.go;renderNav();renderPage()});$$('[data-modal]').forEach(b=>b.onclick=()=>openModal(b.dataset.modal));$$('[data-export]').forEach(b=>b.onclick=()=>exportData(b.dataset.export));$$('[data-do="report"]').forEach(b=>b.onclick=()=>{notify(t('reportReady'));print()});$$('[data-do="close"]').forEach(b=>b.onclick=()=>{notify(t('periodClosed'));b.textContent='✓ '+t('periodClosed');b.disabled=true});$$('[data-church]').forEach(b=>b.onclick=()=>{let c=churches[Number(b.dataset.church)];page='churches';$('#content').innerHTML=`${pageHead(c[0],t('churchDetail'))}${stats([['♙',t('totalMembers'),c[3],t('registered')],['✧',t('baptized'),'96','75%'],['◈',t('balance'),'$3.120.000',t('thisMonth')],['♙',t('pastorLabel'),c[2],'']])}<section class="panel"><div class="panel-head"><h2>${c[0]}</h2><span class="status">${t('active')}</span></div><p>${t('address')}: ${c[1]}</p><p>${t('pastorLabel')}: ${c[2]}</p><button class="secondary" data-go="secretary">${t('members')} →</button></section>`;bindPage()});let search=$('#memberSearch');if(search)search.oninput=()=>{filter=search.value;$('#memberRows').innerHTML=memberRows()}}
+function baseBindPage(){document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$$('[data-go]').forEach(b=>b.onclick=()=>{page=b.dataset.go;renderNav();renderPage()});$$('[data-modal]').forEach(b=>b.onclick=()=>openModal(b.dataset.modal));$$('[data-export]').forEach(b=>b.onclick=()=>exportData(b.dataset.export));$$('[data-do="report"]').forEach(b=>b.onclick=()=>{notify(t('reportReady'));print()});$$('[data-do="close"]').forEach(b=>b.onclick=()=>{notify(t('periodClosed'));b.textContent='✓ '+t('periodClosed');b.disabled=true});$$('[data-church]').forEach(b=>b.onclick=()=>{let c=churches[Number(b.dataset.church)];page='churches';$('#content').innerHTML=`${pageHead(c[0],t('churchDetail'))}${stats(churchDetailStats(c))}<section class="panel"><div class="panel-head"><h2>${c[0]}</h2><span class="status">${t('active')}</span></div><p>${t('address')}: ${c[1]}</p><p>${t('pastorLabel')}: ${c[2]}</p><button class="secondary" data-go="secretary">${t('members')} →</button></section>`;bindPage()});let search=$('#memberSearch');if(search)search.oninput=()=>{filter=search.value;$('#memberRows').innerHTML=memberRows()}}
 function baseOpenModal(type){let content='';if(type==='member')content=`<h2>${t('addMember')}</h2><p>${t('membersSubtitle')}</p><div class="modal-grid"><div class="field"><label>${t('name')}</label><input name="name" required></div><div class="field"><label>${t('document')}</label><input name="id" required></div><div class="field"><label>${t('age')}</label><input name="age" type="number" min="0" required></div><div class="field"><label>${t('sex')}</label><select name="sex"><option>Femenino</option><option>Masculino</option></select></div><div class="field"><label>${t('civil')}</label><select name="civil"><option>Soltero</option><option>Casado</option><option>Unión libre</option><option>No aplica</option></select></div><div class="field"><label>${t('baptism')}</label><select name="baptized"><option value="true">${t('yes')}</option><option value="false">${t('no')}</option></select></div></div>`;else if(type==='movement')content=`<h2>${t('addMovement')}</h2><p>${t('financeSubtitlePastor')}</p><div class="field"><label>${t('description')}</label><input name="description" required></div><div class="modal-grid"><div class="field"><label>${t('income')} / ${t('expenses')}</label><select name="type"><option>${t('income')}</option><option>${t('expenses')}</option></select></div><div class="field"><label>${t('amount')}</label><input name="amount" type="number" min="1" required></div><div class="field"><label>${t('date')}</label><input name="date" type="date" value="2026-06-15"></div></div>`;else if(type==='church')content=`<h2>${t('newChurch')}</h2><p>${t('churchesSubtitle')}</p><div class="field"><label>${t('churchLabel')}</label><input name="name" required></div><div class="field"><label>${t('address')}</label><input name="address" required></div><div class="field"><label>${t('pastorLabel')}</label><input name="pastor"></div>`;else content=`<h2>${type==='teacher'?t('teachersTitle'):t('newPastor')}</h2><p>${t('pastorsSubtitle')}</p><div class="field"><label>${t('name')}</label><input name="name" required></div><div class="field"><label>${t('document')}</label><input name="id"></div><div class="field"><label>${type==='teacher'?t('campuses'):t('academic')}</label><input name="extra"></div>`;$('#modalRoot').innerHTML=`<div class="modal-backdrop"><form class="modal" id="modalForm">${content}<div class="modal-actions"><button type="button" class="secondary" id="cancelModal">${t('cancel')}</button><button class="primary">${t('save')}</button></div></form></div>`;$('#cancelModal').onclick=()=>$('#modalRoot').innerHTML='';$('#modalForm').onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));if(type==='member'){members.unshift({...d,age:Number(d.age),baptized:d.baptized==='true',church:HOME_CHURCH});filter='';notify(t('memberAdded'));if(page==='members'||page==='secretary')renderPage()}else if(type==='movement'){finance.unshift({...d,amount:Number(d.amount)});notify(t('movementAdded'));page='finance';renderPage()}else if(type==='church'){churches.push([d.name,d.address,d.pastor||'Por asignar','0']);notify(t('churchAdded'));page='churches';renderPage()}else{notify(t('save')+' ✓')}$('#modalRoot').innerHTML=''}}
 function notify(msg){let n=$('#toast');n.textContent=msg;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),2800)}
-function exportData(type){let rows,filename;if(type==='members'){rows=[['Nombre',t('document'),t('age'),t('sex'),t('civil'),L('Asociación','Association'),t('baptism')],...members.map(m=>[m.name,m.id,m.age,m.sex,m.civil,assocName(m),m.baptized?t('yes'):t('no')])];filename='miembros-circuito.csv'}else if(type==='churches'){rows=[['Iglesia',t('address'),t('pastorLabel'),t('totalMembers')],...churches];filename='iglesias-circuito.csv'}else if(type==='finance'){rows=[['Iglesia',t('initial'),t('income'),t('expenses'),t('final')],...churches.map((c,i)=>[c[0],1800000+i*380000,2450000-i*260000,1130000-i*110000,3120000+i*230000])];filename='informe-financiero.csv'}else{rows=[['Estudiante',t('churchLabel'),t('grades'),t('itaic')],['María Gómez','Iglesia Central','4.6',t('year1')]];filename='itaic-estudiantes.csv'}let csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(';')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=filename;a.click();URL.revokeObjectURL(a.href);notify(t('download')+' ✓')}
+function exportData(type){let rows,filename;if(type==='members'){rows=[['Nombre',t('document'),t('age'),t('sex'),t('civil'),L('Asociación','Association'),t('baptism')],...members.map(m=>[m.name,m.id,m.age,m.sex,m.civil,assocName(m),m.baptized?t('yes'):t('no')])];filename='miembros-circuito.csv'}else if(type==='churches'){rows=[['Iglesia',t('address'),t('pastorLabel'),t('totalMembers')],...churches];filename='iglesias-circuito.csv'}else if(type==='finance'){rows=[['Iglesia',t('initial'),t('income'),t('expenses'),t('final')],...churches.map(c=>{let x=ledgerTotals(ensureLedger(c[0]));return [c[0],x.opening,x.income,x.expenses,x.closing]})];filename='informe-financiero.csv'}else{rows=studentCsvRows();filename='itaic-estudiantes.csv'}let csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(';')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=filename;a.click();URL.revokeObjectURL(a.href);notify(t('download')+' ✓')}
 
 // Acceso ITAIC y evaluación ponderada por curso asignado.
 const itaicCourses=[
@@ -48,7 +48,7 @@ const teacherName=()=>role==='maestro'?'Ana Lucía Ríos':churches[0][2];
 const teacherCourseList=()=>sections().filter(x=>x.teacher===teacherName());
 const isItaicTeacher=()=>['pastor','maestro'].includes(role)&&teacherCourseList().length>0;
 const originalBindPage=baseBindPage;
-function renderNav(){let list=role==='presbitero'?['dashboard','churches','finance','secretary','itaic','pastors']:role==='tesorero'?['dashboard','finance']:role==='secretario'?['dashboard','secretary']:role==='pastor'?['dashboard','members','finance',...(isItaicTeacher()?['itaic']:[])]:role==='maestro'?['dashboard','itaic']:['dashboard'];$('#navigation').innerHTML=list.map((key,i)=>`${i===1?'<div class="nav-sep"></div>':''}<button class="nav-item ${page===key?'active':''}" data-page="${key}"><span class="nav-icon">${navInfo[key][0]}</span>${key==='itaic'&&isItaicTeacher()?t('myCourses'):t(navInfo[key][1])}</button>`).join('');$$('.nav-item').forEach(b=>b.onclick=()=>{page=b.dataset.page;selectedCourseId=null;$('#sidebar').classList.remove('open');renderNav();renderPage()})}
+function renderNav(){let list=role==='presbitero'?['dashboard','churches','finance','secretary','itaic','pastors']:role==='tesorero'?['dashboard','finance']:role==='secretario'?['dashboard','secretary','pastors']:role==='pastor'?['dashboard','members','finance',...(isItaicTeacher()?['itaic']:[])]:role==='maestro'?['dashboard','itaic']:['dashboard'];$('#navigation').innerHTML=list.map((key,i)=>`${i===1?'<div class="nav-sep"></div>':''}<button class="nav-item ${page===key?'active':''}" data-page="${key}"><span class="nav-icon">${navInfo[key][0]}</span>${key==='itaic'&&isItaicTeacher()?t('myCourses'):t(navInfo[key][1])}</button>`).join('');$$('.nav-item').forEach(b=>b.onclick=()=>{page=b.dataset.page;selectedCourseId=null;$('#sidebar').classList.remove('open');renderNav();renderPage()})}
 function teacherSummary(course){let as=courseAssessments[course.id]||[],weight=as.reduce((n,a)=>n+a.weight,0),students=course.students.map(id=>members.find(m=>m.id===id)).filter(Boolean);return `<section class="panel teacher-course"><div class="panel-head"><div><div class="eyebrow-line">${(course.subjectName||'').toUpperCase()} · ${t(course.year).toUpperCase()} · ${course.campus}</div><h2>${t('students')} · ${students.length}</h2><p>${t('assignedOnly')}: ${course.teacher}</p></div><button class="primary" data-open-course="${course.id}">${t('openCourse')} →</button></div><div class="grade-progress"><span>${t('weightGraded')}</span><b>${weight}%</b><div class="progress-track"><i style="width:${Math.min(100,weight)}%"></i></div><small>${t('remainingWeight')}: ${100-weight}%</small></div></section>`}
 function teacherHome(){let courses=teacherCourseList();if(!courses.length)return `${pageHead(t('itaic'),t('noAssignedCourses'))}<section class="panel empty">${t('noAssignedCourses')}</section>`;return `${pageHead(t('myCourses'),t('teacherWelcome'))}${courses.map(teacherSummary).join('')}`}
 function weightedTotal(course,studentId){let assessments=courseAssessments[course.id]||[];return assessments.reduce((sum,a)=>sum+(Number(a.grades[studentId]||0)*a.weight/100),0)}
@@ -85,7 +85,7 @@ function exportFormalReport(kind,scope,format){let title=reportTitleFor(kind,sco
 function downloadFile(content,name,mime){let blob=new Blob([content],{type:`${mime};charset=utf-8`}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function itaicFinancePage(){let totalDue=itaicPayments.reduce((a,p)=>a+p.due,0),collected=itaicPayments.reduce((a,p)=>a+p.paid,0),paid=itaicPayments.filter(p=>p.paid>=p.due).length,owing=itaicPayments.length-paid;return `${pageHead(t('itaicFinance'),t('itaicFinanceReport'),`<button class="secondary" data-report="itaic-finance">${t('generate')} →</button>`)}${stats([['◈',t('totalCollected'),`$${collected.toLocaleString('es-CO')}`,t('paid')],['◌',t('outstanding'),`$${(totalDue-collected).toLocaleString('es-CO')}`,t('owed')],['✓',t('paidAccounts'),paid,t('paymentFullyPaid')],['!',t('owingAccounts'),owing,t('paymentPartial')]])}<section class="table-card"><div class="table-tools"><b>${t('verifyPayments')}</b></div><table class="data-table"><thead><tr><th>${t('student')}</th><th>${t('tuition')}</th><th>${t('paid')}</th><th>${t('owed')}</th><th>${t('paymentStatus')}</th><th></th></tr></thead><tbody>${itaicPayments.map(p=>{let m=members.find(x=>x.id===p.id),due=p.due-p.paid;return `<tr><td><strong>${m?.name||p.id}</strong></td><td>$${p.due.toLocaleString('es-CO')}</td><td>$${p.paid.toLocaleString('es-CO')}</td><td>$${due.toLocaleString('es-CO')}</td><td><span class="status ${due?'pending':''}">${due?t('paymentPartial'):t('paymentFullyPaid')}</span></td><td>${role==='itaic'?`<button class="secondary" data-payment-student="${p.id}">${t('markPayment')}</button>`:''}</td></tr>`}).join('')}</tbody></table></section>`}
 function itaicAdminPage(){let canManage=role==='itaic',actions=`<button class="secondary" data-report="itaic-secretary">${t('studentsReport')} · ${t('generate')}</button>${canManage?`<button class="primary" data-modal="teacher">＋ ${t('assignTeacher')}</button>`:''}`;return `${pageHead(t('itaic'),t('itaicAdmin'),actions)}<div class="stats-grid">${[['▣',t('students'),'5',t('registered')],['⌂',t('campuses'),'2',lang==='es'?'sedes activas':'active campuses'],['♙',t('teachersTitle'),teacherAssignments.length,lang==='es'?'asignaciones activas':'active assignments'],['◈',t('totalCollected'),`$${itaicPayments.reduce((n,p)=>n+p.paid,0).toLocaleString('es-CO')}`,t('itaicFinance')]].map(a=>`<article class="stat-card"><div class="stat-top"><span>${a[1]}</span><span class="stat-icon">${a[0]}</span></div><div class="stat-value">${a[2]}</div><div class="stat-note">${a[3]}</div></article>`).join('')}</div><section class="panel"><div class="panel-head"><div><h2>${t('courseGroups')}</h2><p>${t('courseGroupsHint')}</p></div><button class="secondary" data-go="itaicFinance">${t('itaicFinance')} →</button></div>${itaicCourses.map(c=>`<div class="church-row"><div class="church-emblem">✧</div><div><b>${t(c.year)} · ${c.campus}</b><small>${t('teacherLabel')}: ${c.teacher||t('select')}</small></div><div class="row-end"><b>${c.students.length}</b><small>${t('students').toLowerCase()}</small></div><button class="text-link" data-admin-course="${c.id}">${t('gradesCheck')} →</button></div>`).join('')}</section><section class="panel"><div class="panel-head"><div><h2>${t('assignments')}</h2><p>${t('editAssignment')}</p></div>${canManage?`<button class="secondary" data-modal="teacher">＋ ${t('assignTeacher')}</button>`:''}</div>${teacherAssignments.map(a=>{let c=itaicCourses.find(x=>x.id===a.course);return `<div class="church-row"><div class="church-emblem">♙</div><div><b>${a.teacher}</b><small>${t(c.year)} · ${c.campus}</small></div>${canManage?`<button class="inline-actions" data-remove-assignment="${a.course}">×</button>`:''}</div>`}).join('')}</section>`}
-function renderNav(){let list=role==='presbitero'?['dashboard','churches','finance','secretary','itaic','pastors']:role==='tesorero'?['dashboard','finance']:role==='secretario'?['dashboard','secretary']:role==='pastor'?['dashboard','members','finance',...(isItaicTeacher()?['itaic']:[])]:role==='maestro'?['dashboard','itaic']:role==='itaic'?['dashboard','itaic','itaicFinance']:['dashboard'];$('#navigation').innerHTML=list.map((key,i)=>`<button class="nav-item ${page===key?'active':''}" data-page="${key}"><span class="nav-icon">${navInfo[key][0]}</span>${key==='itaic'&&isItaicTeacher()?t('myCourses'):t(navInfo[key][1])}</button>`).join('');$$('.nav-item').forEach(b=>b.onclick=()=>{page=b.dataset.page;selectedCourseId=null;$('#sidebar').classList.remove('open');renderNav();renderPage()})}
+function renderNav(){let list=role==='presbitero'?['dashboard','churches','finance','secretary','itaic','pastors']:role==='tesorero'?['dashboard','finance']:role==='secretario'?['dashboard','secretary','pastors']:role==='pastor'?['dashboard','members','finance',...(isItaicTeacher()?['itaic']:[])]:role==='maestro'?['dashboard','itaic']:role==='itaic'?['dashboard','itaic','itaicFinance']:['dashboard'];$('#navigation').innerHTML=list.map((key,i)=>`<button class="nav-item ${page===key?'active':''}" data-page="${key}"><span class="nav-icon">${navInfo[key][0]}</span>${key==='itaic'&&isItaicTeacher()?t('myCourses'):t(navInfo[key][1])}</button>`).join('');$$('.nav-item').forEach(b=>b.onclick=()=>{page=b.dataset.page;selectedCourseId=null;$('#sidebar').classList.remove('open');renderNav();renderPage()})}
 function coursePage(){let course=(role==='itaic'||role==='presbitero'?itaicCourses:teacherCourseList()).find(c=>c.id===selectedCourseId);if(!course)return teacherHome();let assessments=courseAssessments[course.id]||[],weight=assessments.reduce((n,a)=>n+a.weight,0),students=courseStudents(course),editable=['maestro','pastor'].includes(role)&&teacherCourseList().some(c=>c.id===course.id);return `${pageHead(`${course.subjectName||''} · ${t(course.year)} · ${course.campus}`,`${t('teacherWelcome')} · ${course.teacher}`,`<button class="secondary" data-back-courses>← ${role==='itaic'?t('itaic'):t('myCourses')}</button>${editable?`<button class="primary" data-modal="assessment" ${weight>=100?'disabled':''}>＋ ${t('addAssessment')}</button>`:''}`)}<div class="summary-band"><div><small>${t('students')}</small><b>${students.length}</b></div><div><small>${t('weightGraded')}</small><b>${weight}%</b></div><div><small>${t('remainingWeight')}</small><b>${100-weight}%</b></div></div><section class="panel"><div class="panel-head"><div><h2>${t('gradebook')}</h2><p>${t('weightedNote')}</p></div>${editable?`<button class="secondary" data-save-grades>${t('saveGrades')}</button>`:''}</div><div class="table-card"><table class="data-table grade-table"><thead><tr><th>${t('student')}</th>${assessments.map(a=>`<th>${a.name}<small class="weight-label">${a.weight}%</small></th>`).join('')}<th>${t('weightedTotal')}</th><th>${t('completedWeight')}</th></tr></thead><tbody>${students.map(m=>{let got=assessments.reduce((n,a)=>n+(a.grades[m.id]!==undefined?a.weight:0),0),total=weightedTotal(course,m.id);return `<tr><td><strong>${m.name}</strong><small class="student-meta">${m.id}</small></td>${assessments.map((a,i)=>`<td>${editable?`<input aria-label="${a.name} · ${m.name}" class="grade-input" data-grade-course="${course.id}" data-grade-assessment="${i}" data-grade-student="${m.id}" type="number" min="0" max="5" step="0.1" value="${a.grades[m.id]??''}" placeholder="—">`:(a.grades[m.id]??'—')}</td>`).join('')}<td><strong class="weighted-result">${total.toFixed(2)} / 5.00</strong></td><td><span class="status ${got<100?'pending':''}">${got}%</span></td></tr>`}).join('')}</tbody></table></div></section>`}
 function previousRenderPage(){if(page==='itaic'&&['itaic','presbitero'].includes(role)){$('#breadcrumb').textContent=t('itaic');$('#content').innerHTML=itaicAdminPage();bindPage();return}if(page==='itaicFinance'&&role==='itaic'){$('#breadcrumb').textContent=t('itaicFinance');$('#content').innerHTML=itaicFinancePage();bindPage();return}if(page==='itaic'&&isItaicTeacher())page='teacherHome';if((page==='teacherHome'||page==='teacherCourse')&&(['itaic','presbitero'].includes(role)||isItaicTeacher())){$('#breadcrumb').textContent=page==='teacherCourse'?t('gradesCheck'):t('myCourses');$('#content').innerHTML=page==='teacherCourse'?coursePage():teacherHome();bindPage();return}if(page==='teacherHome'||page==='teacherCourse'||(page==='itaic'&&role!=='presbitero'&&role!=='itaic'))page='dashboard';if(page==='dashboard'){let title=t('dashboard');$('#breadcrumb').textContent=title;$('#content').innerHTML=role==='itaic'?`${pageHead(t('itaicAdmin'),t('itaicSubtitle'))}<section class="panel"><div class="toolbar"><button class="primary" data-go="itaic">${t('itaic')} →</button><button class="secondary" data-go="itaicFinance">${t('itaicFinance')} →</button></div></section>`:dashboard()}else if(page==='itaic'){return renderPage()}else if(page==='itaicFinance'){page='dashboard';return renderPage()}else{let title=navInfo[page]?t(navInfo[page][1]):t('dashboard');$('#breadcrumb').textContent=title;$('#content').innerHTML=page==='churches'?churchPage():page==='finance'?financePage():page==='secretary'||page==='members'?secretaryPage():page==='pastors'?simplePage(page):`<div class="empty">${t('noAccess')}</div>`}bindPage()}
 function bindPage(){if(page==='itaic'&&['itaic','presbitero'].includes(role)){ $$('[data-go="itaicFinance"]').forEach(b=>b.onclick=()=>{page='itaicFinance';renderPage()});$$('[data-modal="teacher"]').forEach(b=>{if(role==='itaic')b.onclick=()=>openModal('teacher');else b.remove()});$$('[data-report]').forEach(b=>b.onclick=()=>openReportBuilder(b.dataset.report));$$('[data-admin-course]').forEach(b=>b.onclick=()=>{selectedCourseId=b.dataset.adminCourse;page='teacherCourse';renderPage()});$$('[data-remove-assignment]').forEach(b=>b.onclick=()=>{if(role!=='itaic')return;let id=b.dataset.removeAssignment;teacherAssignments=teacherAssignments.filter(a=>a.course!==id);let c=itaicCourses.find(x=>x.id===id);if(c)c.teacher='';renderPage()});return}originalBindPage();$$('[data-do="report"]').forEach(b=>b.onclick=()=>openReportBuilder(page==='finance'?'finance':'secretary'));$$('[data-report]').forEach(b=>b.onclick=()=>openReportBuilder(b.dataset.report));$$('[data-open-course]').forEach(b=>b.onclick=()=>{selectedCourseId=b.dataset.openCourse;page='teacherCourse';renderPage()});$$('[data-payment-student]').forEach(b=>b.onclick=()=>openModal('payment',b.dataset.paymentStudent));$$('[data-go="itaicFinance"]').forEach(b=>b.onclick=()=>{page='itaicFinance';renderPage()});}
@@ -101,7 +101,7 @@ Object.assign(I.es,{financialReportTitle:'Informe financiero',generalReportTitle
 let localAgeRanges={childrenMax:8,juvenilesMax:15,youthMax:30};
 members.push({name:'Camilo Andrés Pérez',id:'1.111.222.333',age:19,sex:'Masculino',civil:'Soltero',baptized:false,church:'Iglesia Central'});
 let itaicEnrollmentRequests=[];
-function renderNav(){let list=role==='presbitero'?['dashboard','churches','finance','secretary','itaic','pastors']:role==='tesorero'?['dashboard','finance']:role==='secretario'?['dashboard','secretary']:role==='pastor'?['dashboard','members','finance','itaic']:role==='maestro'?['dashboard','itaic']:role==='itaic'?['dashboard','itaic','itaicFinance']:['dashboard'];$('#navigation').innerHTML=list.map((key,i)=>`<button class="nav-item ${page===key?'active':''}" data-page="${key}"><span class="nav-icon">${navInfo[key][0]}</span>${key==='itaic'&&role==='pastor'?(lang==='es'?'ITAIC · Inscripciones': 'ITAIC · Enrollment'):key==='itaic'&&isItaicTeacher()?t('myCourses'):t(navInfo[key][1])}</button>`).join('');$$('.nav-item').forEach(b=>b.onclick=()=>{page=b.dataset.page;selectedCourseId=null;$('#sidebar').classList.remove('open');renderNav();renderPage()})}
+function renderNav(){let list=role==='presbitero'?['dashboard','churches','finance','secretary','itaic','pastors']:role==='tesorero'?['dashboard','finance']:role==='secretario'?['dashboard','secretary','pastors']:role==='pastor'?['dashboard','members','finance','itaic']:role==='maestro'?['dashboard','itaic']:role==='itaic'?['dashboard','itaic','itaicFinance']:['dashboard'];$('#navigation').innerHTML=list.map((key,i)=>`<button class="nav-item ${page===key?'active':''}" data-page="${key}"><span class="nav-icon">${navInfo[key][0]}</span>${key==='itaic'&&role==='pastor'?(lang==='es'?'ITAIC · Inscripciones': 'ITAIC · Enrollment'):key==='itaic'&&isItaicTeacher()?t('myCourses'):t(navInfo[key][1])}</button>`).join('');$$('.nav-item').forEach(b=>b.onclick=()=>{page=b.dataset.page;selectedCourseId=null;$('#sidebar').classList.remove('open');renderNav();renderPage()})}
 Object.assign(I.es,{no:'No bautizado',ageGroups:'Miembros por grupo de edad',editAgeRanges:'Establecer rangos',childrenRange:'Niños · desde 1 año hasta',juvenilesRange:'Juveniles · hasta',youthRange:'Jóvenes · hasta',ladiesGentlemen:'Damas y caballeros',noBaptism:'No bautizados',generalReport:'Informe general'});Object.assign(I.en,{ageGroups:'Members by age group',editAgeRanges:'Set age ranges',childrenRange:'Children · from age 1 to',juvenilesRange:'Juveniles · through age',youthRange:'Youth · through age',ladiesGentlemen:'Women and men',noBaptism:'Not baptized',generalReport:'General report'});
 function memberAgeCategory(m){let age=Number(m.age),married=['Casado','Unión libre','Married','Common-law'].includes(m.civil),female=['Femenino','Female'].includes(m.sex);if(age>=1&&age<=localAgeRanges.childrenMax)return 'Niños';if(age<=localAgeRanges.juvenilesMax)return 'Juveniles';if(age<=localAgeRanges.youthMax&&!married)return 'Jóvenes';return female?'Damas':'Caballeros'}
 function pastorDashboard(){let local=members.filter(m=>m.church===HOME_CHURCH),baptized=local.filter(m=>m.baptized).length,unbaptized=local.length-baptized,groups=['Niños','Juveniles','Jóvenes','Damas','Caballeros'],counts=Object.fromEntries(groups.map(g=>[g,local.filter(m=>memberAgeCategory(m)===g).length]));return `${pageHead(HOME_CHURCH,'Circuito Córdoba · Calle 15 # 8-42 · Montería')} ${stats([['♙',t('totalMembers'),local.length,t('membersSubtitle')],['✧',t('baptized'),baptized,lang==='es'?'Miembros bautizados':'Baptized members'],['○',t('noBaptism'),unbaptized,lang==='es'?'Miembros pendientes de bautismo':'Not baptized'],['◈',t('balance'),'$3.120.000',t('thisMonth')]])}<section class="panel"><div class="panel-head"><div><h2>${t('ageGroups')}</h2><p>${t('childrenRange')} ${localAgeRanges.childrenMax} · Juveniles ${localAgeRanges.childrenMax+1}–${localAgeRanges.juvenilesMax} · Jóvenes ${localAgeRanges.juvenilesMax+1}–${localAgeRanges.youthMax} · Damas/caballeros según edad, sexo y estado civil</p></div><button class="secondary" data-modal="ageRanges">${t('editAgeRanges')}</button></div><div class="summary-band">${groups.map((g,i)=>`<div><small>${g}</small><b>${counts[g]}</b></div>`).join('')}</div><div class="table-card"><table class="data-table"><thead><tr><th>${t('member')}</th><th>${t('age')}</th><th>${t('civil')}</th><th>${t('sex')}</th><th>${lang==='es'?'Grupo':'Group'}</th><th>${t('baptism')}</th></tr></thead><tbody>${local.map(m=>`<tr><td><strong>${m.name}</strong></td><td>${m.age}</td><td>${m.civil}</td><td>${m.sex}</td><td>${memberAgeCategory(m)}</td><td>${m.baptized?t('yes'):t('noBaptism')}</td></tr>`).join('')}</tbody></table></div></section><div class="grid-2"><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Datos de mi iglesia':'My church details'}</h2><p>${t('pastorLabel')}: Pr. José Martínez</p></div></div><div class="church-row"><div class="church-emblem">⌂</div><div><b>${HOME_CHURCH}</b><small>${churches[0][1]}</small></div><div class="row-end"><b>$3.120.000</b><small>${t('balance')}</small></div></div></section><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Actividad local':'Local activity'}</h2><p>${lang==='es'?'Actividad reciente de la iglesia':'Recent church activity'}</p></div></div><div class="activity-row"><div class="activity-dot">♙</div><div><b>${lang==='es'?'Miembros registrados':'Members registered'}</b><small>${local.length} ${t('membersLabel')}</small></div></div><div class="activity-row"><div class="activity-dot">◈</div><div><b>${lang==='es'?'Saldo del periodo':'Current period balance'}</b><small>$3.120.000</small></div></div></section></div>`}
@@ -140,7 +140,7 @@ const categoryLabel=c=>({Diezmos:'tithes',Ofrendas:'offerings',Primicias:'firstF
 Object.assign(I.es,{tithes:'Diezmos',offerings:'Ofrendas',firstFruits:'Primicias',activities:'Actividades',otherIncome:'Otros',titheOfTithes:'Diezmo de diezmos',titheOfOfferings:'Diezmo de ofrendas',utilities:'Servicios públicos',pastorPay:'Pago pastor',renovation:'Remodelación',cleaningSupplies:'Implementos de limpieza',furniture:'Muebles',equipmentPurchase:'Compra de equipos',equipmentMaintenance:'Mantenimiento de equipos',openingBalance:'Saldo inicial',incomeBreakdown:'Ingresos desglosados',expenseBreakdown:'Egresos desglosados',totalIncome:'Total ingresos',totalExpenses:'Total egresos',closingBalance:'Saldo final',recordMovement:'Registrar ingreso o egreso',manualDescription:'Descripción del movimiento',manualDescriptionHint:'Obligatoria para Actividades y Otros'});Object.assign(I.en,{tithes:'Tithes',offerings:'Offerings',firstFruits:'First fruits',activities:'Activities',otherIncome:'Other',titheOfTithes:'Tithe of tithes',titheOfOfferings:'Tithe of offerings',utilities:'Utilities',pastorPay:'Pastor payment',renovation:'Renovation',cleaningSupplies:'Cleaning supplies',furniture:'Furniture',equipmentPurchase:'Equipment purchase',equipmentMaintenance:'Equipment maintenance',openingBalance:'Opening balance',incomeBreakdown:'Income breakdown',expenseBreakdown:'Expense breakdown',totalIncome:'Total income',totalExpenses:'Total expenses',closingBalance:'Closing balance',recordMovement:'Record income or expense',manualDescription:'Transaction description',manualDescriptionHint:'Required for Activities and Other'});
 function ledgerRows(ledger,includeChurch=false){let totals=ledgerTotals(ledger),rows=[[t('category'),t('date'),t('description'),t('amount')],[t('openingBalance'),'','',totals.opening]];for(const type of ['income','expense']){let list=ledger.transactions.filter(x=>x.type===type),cats=type==='income'?incomeCategories:expenseCategories;rows.push([type==='income'?t('incomeBreakdown'):t('expenseBreakdown'),'','', '']);for(const cat of cats){let entries=list.filter(x=>x.category===cat);if(!entries.length)continue;for(const item of entries)rows.push([categoryLabel(cat),item.date,item.description||'',Number(item.amount)]);rows.push([`${lang==='es'?'Subtotal':'Subtotal'} · ${categoryLabel(cat)}`,'','',entries.reduce((n,x)=>n+Number(x.amount),0)])}}rows.push([t('totalIncome'),'','',totals.income],[t('totalExpenses'),'','',totals.expenses],[t('closingBalance'),'','',totals.closing]);return rows}
 function reportRowsPrevious(kind,scope){if(kind==='finance'){let ledgers=role==='pastor'?[ensureLedger(HOME_CHURCH)]:Object.values(financeLedgers),summary=sumLedgers(ledgers);if(role==='pastor')return ledgerRows(ledgers[0]);let rows=[[t('category'),t('churchLabel'),`${t('description')} / ${t('date')}`,t('amount')],[t('openingBalance'),t('general'),' ',summary.opening],[t('incomeBreakdown'),'','','']];for(const cat of incomeCategories){let entries=ledgers.flatMap(l=>l.transactions.filter(x=>x.type==='income'&&x.category===cat).map(x=>({...x,church:l.church})));if(entries.length){entries.forEach(x=>rows.push([categoryLabel(cat),x.church,x.description||x.date,x.amount]));rows.push([`${lang==='es'?'Subtotal':'Subtotal'} · ${categoryLabel(cat)}`,'','',entries.reduce((n,x)=>n+x.amount,0)])}}rows.push([t('totalIncome'),'','',summary.income],[t('expenseBreakdown'),'','','']);for(const cat of expenseCategories){let entries=ledgers.flatMap(l=>l.transactions.filter(x=>x.type==='expense'&&x.category===cat).map(x=>({...x,church:l.church})));if(entries.length){entries.forEach(x=>rows.push([categoryLabel(cat),x.church,x.description||x.date,x.amount]));rows.push([`${lang==='es'?'Subtotal':'Subtotal'} · ${categoryLabel(cat)}`,'','',entries.reduce((n,x)=>n+x.amount,0)])}}rows.push([t('totalExpenses'),'','',summary.expenses],[t('closingBalance'),t('general'),' ',summary.closing],['','', '', ''],[lang==='es'?'Saldo final por iglesia':'Closing balance by church','','','']);for(const l of ledgers)rows.push([l.church,'','',ledgerTotals(l).closing]);return rows}if(kind==='churches')return [['Iglesia',t('address'),t('pastorLabel'),t('totalMembers')],...churches.map(c=>[c[0],c[1],c[2],c[3]])];if(kind.startsWith('itaic'))return itaicReportRows(kind,scope);if(kind==='secretary'){if(role==='pastor')return [['Nombre',t('document'),t('age'),t('sex'),t('civil'),L('Asociación','Association'),t('baptism')],...members.filter(m=>m.church===HOME_CHURCH).map(m=>[m.name,m.id,m.age,m.sex,m.civil,assocName(m),m.baptized?t('yes'):t('no')])];return [['Iglesia',t('totalMembers'),t('baptized'),t('women'),t('men'),t('children')],...churches.map(c=>[c[0],c[3],Math.round(Number(c[3])*.74),Math.round(Number(c[3])*.56),Math.round(Number(c[3])*.44),Math.round(Number(c[3])*.15)])]}return [['Nombre',t('document'),t('age'),t('sex'),t('civil'),L('Asociación','Association'),t('baptism')],...members.map(m=>[m.name,m.id,m.age,m.sex,m.civil,assocName(m),m.baptized?t('yes'):t('no')])]}
-function financePage(){if(role==='pastor'){let ledger=ensureLedger(HOME_CHURCH),totals=ledgerTotals(ledger),cats=(type,list)=>list.map(c=>{let sum=ledger.transactions.filter(x=>x.type===type&&x.category===c).reduce((n,x)=>n+Number(x.amount),0);return drillRows(type,c,sum,ledger)}).join('');return `${pageHead(t('finance'),HOME_CHURCH+' · '+periodLabelOf(HOME_CHURCH),`<button class="secondary" data-modal="openingBalance">${t('openingBalance')}</button><button class="secondary" data-export="finance">${t('generate')} →</button><button class="secondary" data-it4="closePeriod">${L('Cierre de periodo','Close period')}</button><button class="primary" data-modal="movement">＋ ${t('recordMovement')}</button>`)}<div class="summary-band"><div><small>${t('openingBalance')}</small><b>$${totals.opening.toLocaleString('es-CO')}</b></div><div><small>${t('totalIncome')}</small><b>$${totals.income.toLocaleString('es-CO')}</b></div><div><small>${t('totalExpenses')}</small><b>$${totals.expenses.toLocaleString('es-CO')}</b></div><div><small>${t('closingBalance')}</small><b>$${totals.closing.toLocaleString('es-CO')}</b></div></div><div class="grid-2"><section class="panel"><div class="panel-head"><div><h2>${t('incomeBreakdown')}</h2><p>${t('totalIncome')}: $${totals.income.toLocaleString('es-CO')}</p></div></div><div class="table-card"><table class="data-table compact"><tbody>${cats('income',incomeCategories)}</tbody></table></div></section><section class="panel"><div class="panel-head"><div><h2>${t('expenseBreakdown')}</h2><p>${t('totalExpenses')}: $${totals.expenses.toLocaleString('es-CO')}</p></div></div><div class="table-card"><table class="data-table compact"><tbody>${cats('expense',expenseCategories)}</tbody></table></div></section></div><section class="table-card"><div class="table-tools"><b>${lang==='es'?'Movimientos del periodo':'Current period transactions'}</b></div><table class="data-table"><thead><tr><th>${t('date')}</th><th>${t('type')}</th><th>${t('category')}</th><th>${t('description')}</th><th>${t('amount')}</th><th></th></tr></thead><tbody>${ledger.transactions.map((x,i)=>({x,i})).reverse().map(({x,i})=>`<tr><td>${x.date}</td><td>${t(x.type==='income'?'income':'expenses')}</td><td>${categoryLabel(x.category)}</td><td>${x.description||'—'}</td><td>$${Number(x.amount).toLocaleString('es-CO')}</td><td class="tx-actions"><button class="inline-actions" data-it4="editTx|${i}" title="${L('Editar','Edit')}">✎</button><button class="inline-actions" data-it4="delTx|${i}" title="${L('Eliminar','Delete')}">×</button></td></tr>`).join('')}</tbody></table></section>${periodPanel(HOME_CHURCH)}`}let ledgers=Object.values(financeLedgers),sum=sumLedgers(ledgers),churchRowsHtml=ledgers.map(l=>{let x=ledgerTotals(l);return `<tr><td><strong>${l.church}</strong></td><td>$${x.opening.toLocaleString('es-CO')}</td><td>$${x.income.toLocaleString('es-CO')}</td><td>$${x.expenses.toLocaleString('es-CO')}</td><td><strong>$${x.closing.toLocaleString('es-CO')}</strong></td></tr>`}).join('');return `${pageHead(t('finance'),t('financeSubtitle'),`<button class="primary" data-do="report">${t('generate')} →</button>`)}<div class="summary-band"><div><small>${t('openingBalance')}</small><b>$${sum.opening.toLocaleString('es-CO')}</b></div><div><small>${t('totalIncome')}</small><b>$${sum.income.toLocaleString('es-CO')}</b></div><div><small>${t('totalExpenses')}</small><b>$${sum.expenses.toLocaleString('es-CO')}</b></div><div><small>${t('closingBalance')}</small><b>$${sum.closing.toLocaleString('es-CO')}</b></div></div><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Desglose general por concepto':'Circuit-wide breakdown by category'}</h2><p>${t('dateRange')}</p></div></div><div class="grid-2"><div><h3>${t('incomeBreakdown')}</h3><table class="data-table compact"><tbody>${incomeCategories.map(c=>`<tr><td>${categoryLabel(c)}</td><td>$${ledgers.flatMap(l=>l.transactions).filter(x=>x.type==='income'&&x.category===c).reduce((n,x)=>n+x.amount,0).toLocaleString('es-CO')}</td></tr>`).join('')}</tbody></table></div><div><h3>${t('expenseBreakdown')}</h3><table class="data-table compact"><tbody>${expenseCategories.map(c=>`<tr><td>${categoryLabel(c)}</td><td>$${ledgers.flatMap(l=>l.transactions).filter(x=>x.type==='expense'&&x.category===c).reduce((n,x)=>n+x.amount,0).toLocaleString('es-CO')}</td></tr>`).join('')}</tbody></table></div></div></section><section class="table-card"><table class="data-table"><thead><tr><th>${t('churchLabel')}</th><th>${t('openingBalance')}</th><th>${t('totalIncome')}</th><th>${t('totalExpenses')}</th><th>${t('closingBalance')}</th></tr></thead><tbody>${churchRowsHtml}</tbody></table></section>`}
+function financePage(){if(role==='pastor'){let ledger=ensureLedger(HOME_CHURCH),totals=ledgerTotals(ledger),cats=(type,list)=>list.map(c=>{let sum=ledger.transactions.filter(x=>x.type===type&&x.category===c).reduce((n,x)=>n+Number(x.amount),0);return drillRows(type,c,sum,ledger)}).join('');return `${pageHead(t('finance'),HOME_CHURCH+' · '+periodLabelOf(HOME_CHURCH),`<button class="secondary" data-modal="openingBalance">${t('openingBalance')}</button><button class="secondary" data-export="finance">${t('generate')} →</button><button class="secondary" data-it4="closePeriod">${L('Cierre de periodo','Close period')}</button><button class="primary" data-modal="movement">＋ ${t('recordMovement')}</button>`)}<div class="summary-band"><div><small>${t('openingBalance')}</small><b>$${totals.opening.toLocaleString('es-CO')}</b></div><div><small>${t('totalIncome')}</small><b>$${totals.income.toLocaleString('es-CO')}</b></div><div><small>${t('totalExpenses')}</small><b>$${totals.expenses.toLocaleString('es-CO')}</b></div><div><small>${t('closingBalance')}</small><b>$${totals.closing.toLocaleString('es-CO')}</b></div></div><div class="grid-2"><section class="panel"><div class="panel-head"><div><h2>${t('incomeBreakdown')}</h2><p>${t('totalIncome')}: $${totals.income.toLocaleString('es-CO')}</p></div></div><div class="table-card"><table class="data-table compact"><tbody>${cats('income',incomeCategories)}</tbody></table></div></section><section class="panel"><div class="panel-head"><div><h2>${t('expenseBreakdown')}</h2><p>${t('totalExpenses')}: $${totals.expenses.toLocaleString('es-CO')}</p></div></div><div class="table-card"><table class="data-table compact"><tbody>${cats('expense',expenseCategories)}</tbody></table></div></section></div><section class="table-card"><div class="table-tools"><b>${lang==='es'?'Movimientos del periodo':'Current period transactions'}</b></div><table class="data-table"><thead><tr><th>${t('date')}</th><th>${t('type')}</th><th>${t('category')}</th><th>${t('description')}</th><th>${t('amount')}</th><th></th></tr></thead><tbody>${ledger.transactions.map((x,i)=>({x,i})).reverse().map(({x,i})=>`<tr><td>${x.date}</td><td>${t(x.type==='income'?'income':'expenses')}</td><td>${categoryLabel(x.category)}</td><td>${x.description||'—'}</td><td>$${Number(x.amount).toLocaleString('es-CO')}</td><td class="tx-actions">${x.auto?`<span class="status">${L('Auto','Auto')}</span>`:`<button class="inline-actions" data-it4="editTx|${i}" title="${L('Editar','Edit')}">✎</button><button class="inline-actions" data-it4="delTx|${i}" title="${L('Eliminar','Delete')}">×</button>`}</td></tr>`).join('')}</tbody></table></section>${periodPanel(HOME_CHURCH)}`}let ledgers=Object.values(financeLedgers),sum=sumLedgers(ledgers),churchRowsHtml=ledgers.map(l=>{let x=ledgerTotals(l);return `<tr><td><strong>${l.church}</strong></td><td>$${x.opening.toLocaleString('es-CO')}</td><td>$${x.income.toLocaleString('es-CO')}</td><td>$${x.expenses.toLocaleString('es-CO')}</td><td><strong>$${x.closing.toLocaleString('es-CO')}</strong></td></tr>`}).join('');return `${pageHead(t('finance'),t('financeSubtitle'),`<button class="primary" data-do="report">${t('generate')} →</button>`)}<div class="summary-band"><div><small>${t('openingBalance')}</small><b>$${sum.opening.toLocaleString('es-CO')}</b></div><div><small>${t('totalIncome')}</small><b>$${sum.income.toLocaleString('es-CO')}</b></div><div><small>${t('totalExpenses')}</small><b>$${sum.expenses.toLocaleString('es-CO')}</b></div><div><small>${t('closingBalance')}</small><b>$${sum.closing.toLocaleString('es-CO')}</b></div></div><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Desglose general por concepto':'Circuit-wide breakdown by category'}</h2><p>${t('dateRange')}</p></div></div><div class="grid-2"><div><h3>${t('incomeBreakdown')}</h3><table class="data-table compact"><tbody>${incomeCategories.map(c=>`<tr><td>${categoryLabel(c)}</td><td>$${ledgers.flatMap(l=>l.transactions).filter(x=>x.type==='income'&&x.category===c).reduce((n,x)=>n+x.amount,0).toLocaleString('es-CO')}</td></tr>`).join('')}</tbody></table></div><div><h3>${t('expenseBreakdown')}</h3><table class="data-table compact"><tbody>${expenseCategories.map(c=>`<tr><td>${categoryLabel(c)}</td><td>$${ledgers.flatMap(l=>l.transactions).filter(x=>x.type==='expense'&&x.category===c).reduce((n,x)=>n+x.amount,0).toLocaleString('es-CO')}</td></tr>`).join('')}</tbody></table></div></div></section><section class="table-card"><table class="data-table"><thead><tr><th>${t('churchLabel')}</th><th>${t('openingBalance')}</th><th>${t('totalIncome')}</th><th>${t('totalExpenses')}</th><th>${t('closingBalance')}</th></tr></thead><tbody>${churchRowsHtml}</tbody></table></section>`}
 function presbyterDashboard(){let s=sumLedgers(Object.values(financeLedgers));return `${pageHead(`${t('hello')}, ${roles.presbitero[lang]} 👋`,lang==='es'?'Resumen general del Circuito Córdoba.':'Córdoba Circuit overview.')} ${stats([['⌂',t('totalChurches'),'12',lang==='es'?'en el circuito':'in circuit'],['♙',t('totalMembers'),'1,246',`<span class="positive">↑ 4.8%</span> ${lang==='es'?'este año':'this year'}`],['✧',t('baptized'),'918','73.6%'],['◈',t('monthlyIncome'),`$${s.income.toLocaleString('es-CO')}`,t('thisMonth')]])}<div class="grid-2"><section class="panel"><div class="panel-head"><div><h2>${t('churchOverview')}</h2><p>${t('dateRange')}</p></div><button class="text-link" data-go="churches">${t('viewAll')} →</button></div>${churchRows()}</section><section class="panel"><div class="panel-head"><div><h2>${t('recentActivity')}</h2><p>${lang==='es'?'Actividad del circuito':'Circuit activity'}</p></div></div>${activityRows()}</section></div>`}
 function reportHtml(kind,scope){let title=kind==='finance'||kind==='itaic-finance'?t('financialReportTitle'):t('generalReportTitle'),headers=reportHeader(kind,scope),rows=reportRows(kind,scope),body=rows.map((r,ri)=>`<tr>${r.map((v,ci)=>{let value=kind==='finance'&&ci===r.length-1&&typeof v==='number'?`$${v.toLocaleString('es-CO')}`:v;return ri===0?`<th>${reportEsc(value)}</th>`:`<td>${reportEsc(value)}</td>`}).join('')}</tr>`).join('');return `<article class="formal-report"><header class="report-letterhead"><img class="report-mark" style="width:58px;height:58px;object-fit:contain;flex:none" src="${window.AIC_REPORT_LOGO}" alt="Logo de la AIC"><div><b>${reportEsc(headers[0])}</b><span>${reportEsc(headers[1])}</span>${headers[2]?`<span>${reportEsc(headers[2])}</span>`:''}</div></header><h1>${reportEsc(title)}</h1><p class="report-date">${reportEsc(t('reportingPeriod'))}: ${new Date().toLocaleDateString(lang==='es'?'es-CO':'en-US')}</p><table class="formal-table">${body}</table><footer>${reportEsc(t('headerAic'))} · ${reportEsc(t('headerCircuit'))}</footer></article>`}
 function treasurerDashboard(){let sum=sumLedgers(Object.values(financeLedgers));return `${pageHead(t('finance'),t('financeSubtitle'))}<div class="summary-band"><div><small>${t('openingBalance')}</small><b>$${sum.opening.toLocaleString('es-CO')}</b></div><div><small>${t('totalIncome')}</small><b>$${sum.income.toLocaleString('es-CO')}</b></div><div><small>${t('totalExpenses')}</small><b>$${sum.expenses.toLocaleString('es-CO')}</b></div><div><small>${t('closingBalance')}</small><b>$${sum.closing.toLocaleString('es-CO')}</b></div></div><section class="panel"><div class="panel-head"><div><h2>${t('incomeBreakdown')} · ${t('expenseBreakdown')}</h2><p>${t('dateRange')}</p></div><button class="primary" data-go="finance">${t('generate')} →</button></div><p>${lang==='es'?'Ingresos y egresos consolidados con rubros unificados.':'Income and expenses consolidated under shared categories.'}</p></section>`}
@@ -156,9 +156,9 @@ function coursePage(){let readAll=['itaic','presbitero'].includes(role),course=(
 document.addEventListener('click',e=>{let back=e.target.closest('[data-back-itaic]');if(back){e.preventDefault();e.stopImmediatePropagation();page='itaic';renderPage()}},true);
 document.addEventListener('click',e=>{let action=e.target.closest('[data-do="report"]');if(action){e.preventDefault();e.stopImmediatePropagation();openReportBuilder(page==='finance'?'finance':page==='churches'?'churches':'secretary');return}let exportButton=e.target.closest('[data-export]');if(exportButton){e.preventDefault();e.stopImmediatePropagation();let kind=exportButton.dataset.export==='finance'?'finance':exportButton.dataset.export==='churches'?'churches':exportButton.dataset.export==='students'?'itaic-secretary':'secretary';openReportBuilder(kind)}},true);
 function reportHtml(kind,scope){let title=reportTitleFor(kind,scope,kind.endsWith('finance')||kind==='finance'?t('financialReportTitle'):t('generalReportTitle')),headers=reportHeader(kind,scope),rows=reportRows(kind,scope),body=rows.map((r,i)=>`<tr>${r.map(v=>i===0?`<th>${reportEsc(v)}</th>`:`<td>${reportEsc(v)}</td>`).join('')}</tr>`).join('');return `<article class="formal-report"><header class="report-letterhead"><img class="report-mark" style="width:58px;height:58px;object-fit:contain;flex:none" src="${window.AIC_REPORT_LOGO}" alt="Logo de la AIC"><div><b>${reportEsc(headers[0])}</b><span>${reportEsc(headers[1])}</span>${headers[2]?`<span>${reportEsc(headers[2])}</span>`:''}</div></header><h1>${reportEsc(title)}</h1><p class="report-date">${reportEsc(t('reportingPeriod'))}: ${new Date().toLocaleDateString(lang==='es'?'es-CO':'en-US')}</p><table class="formal-table">${body}</table><footer>${reportEsc(t('headerAic'))} · ${reportEsc(t('headerCircuit'))}</footer></article>`}
-function pastorDashboard(){let local=members.filter(m=>m.church===HOME_CHURCH),baptized=local.filter(m=>m.baptized).length,unbaptized=local.length-baptized,kids=local.filter(m=>m.age<13).length,women=local.filter(m=>m.sex==='Femenino').length,men=local.length-women;return `${pageHead(lang==='es'?'Resumen de mi iglesia':'My church overview',HOME_CHURCH+' · '+churches[0][1])} ${stats([['♙',t('totalMembers'),local.length,t('membersSubtitle')],['✧',t('baptized'),baptized,lang==='es'?'Miembros bautizados':'Baptized members'],['○',t('no'),unbaptized,lang==='es'?'Miembros pendientes de bautismo':'Not baptized'],['◈',t('balance'),'$3.120.000',t('thisMonth')]])}<div class="grid-2"><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Composición de la iglesia':'Church composition'}</h2><p>${lang==='es'?'Información de Iglesia Central':'Central Church information'}</p></div></div><div class="summary-band"><div><small>${t('women')}</small><b>${women}</b></div><div><small>${t('men')}</small><b>${men}</b></div><div><small>${t('children')}</small><b>${kids}</b></div></div><div class="church-row"><div class="church-emblem">⌂</div><div><b>${HOME_CHURCH}</b><small>${churches[0][1]}</small></div><div class="row-end"><small>${t('pastorLabel')}</small><b>Pr. José Martínez</b></div></div></section><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Actividad de mi iglesia':'My church activity'}</h2><p>${lang==='es'?'Movimientos recientes locales':'Recent local activity'}</p></div></div><div class="activity"><div class="activity-row"><div class="activity-dot">♙</div><div><b>${lang==='es'?'Miembros registrados':'Members registered'}</b><small>${local.length} ${t('membersLabel')}</small></div><time>${t('thisMonth')}</time></div><div class="activity-row"><div class="activity-dot">◈</div><div><b>${lang==='es'?'Saldo del periodo':'Current period balance'}</b><small>$3.120.000</small></div><time>${t('finance')}</time></div></div></section></div>`}
+function pastorDashboard(){let local=members.filter(m=>m.church===HOME_CHURCH),baptized=local.filter(m=>m.baptized).length,unbaptized=local.length-baptized,kids=local.filter(m=>m.age<13).length,women=local.filter(m=>m.sex==='Femenino').length,men=local.length-women;return `${pageHead(lang==='es'?'Resumen de mi iglesia':'My church overview',HOME_CHURCH+' · '+churches[0][1])} ${stats([['♙',t('totalMembers'),local.length,t('membersSubtitle')],['✧',t('baptized'),baptized,lang==='es'?'Miembros bautizados':'Baptized members'],['○',t('no'),unbaptized,lang==='es'?'Miembros pendientes de bautismo':'Not baptized'],['◈',t('balance'),money(ledgerTotals(ensureLedger(HOME_CHURCH)).closing),periodLabelOf(HOME_CHURCH)]])}<div class="grid-2"><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Composición de la iglesia':'Church composition'}</h2><p>${HOME_CHURCH}</p></div></div><div class="summary-band"><div><small>${t('women')}</small><b>${women}</b></div><div><small>${t('men')}</small><b>${men}</b></div><div><small>${t('children')}</small><b>${kids}</b></div></div><div class="church-row"><div class="church-emblem">⌂</div><div><b>${HOME_CHURCH}</b><small>${churches[0][1]}</small></div><div class="row-end"><small>${t('pastorLabel')}</small><b>${churches[0][2]}</b></div></div></section><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Actividad de mi iglesia':'My church activity'}</h2><p>${lang==='es'?'Movimientos recientes locales':'Recent local activity'}</p></div></div><div class="activity"><div class="activity-row"><div class="activity-dot">♙</div><div><b>${lang==='es'?'Miembros registrados':'Members registered'}</b><small>${local.length} ${t('membersLabel')}</small></div><time>${t('thisMonth')}</time></div><div class="activity-row"><div class="activity-dot">◈</div><div><b>${lang==='es'?'Saldo del periodo':'Current period balance'}</b><small>${money(ledgerTotals(ensureLedger(HOME_CHURCH)).closing)}</small></div><time>${t('finance')}</time></div></div></section></div>`}
 function teacherDashboard(){let courses=teacherCourseList(),students=[...new Set(courses.flatMap(c=>c.students))],records=[];for(let c of courses){let assessments=courseAssessments[c.id]||[];for(let id of c.students){let m=members.find(x=>x.id===id),p=paymentFor(id);if(!m)continue;if(assessments.length)for(let a of assessments)records.push([`${t(c.year)} · ${m.name}`,`${a.name} (${a.weight}%)`,a.grades[id]??'—',a.grades[id]!==undefined?(Number(a.grades[id])*a.weight/100).toFixed(2):'—',`$${p.paid.toLocaleString('es-CO')}`,`$${(p.due-p.paid).toLocaleString('es-CO')}`]);else records.push([`${t(c.year)} · ${m.name}`,t('notAvailable'),'—','—',`$${p.paid.toLocaleString('es-CO')}`,`$${(p.due-p.paid).toLocaleString('es-CO')}`])}}let nAssess=courses.reduce((n,c)=>n+(courseAssessments[c.id]||[]).length,0);return `${pageHead(lang==='es'?'Panel de maestro':'Teacher dashboard',t('teacherWelcome'))}${stats([['▣',t('myCourses'),courses.length,lang==='es'?'Cursos asignados':'Assigned courses'],['♙',t('students'),students.length,lang==='es'?'Estudiantes de mis grupos':'Students in my groups'],['✎',t('grades'),nAssess,lang==='es'?'Evaluaciones en mis cursos':'Assessments in my courses']])}<section class="panel"><div class="panel-head"><div><h2>${t('myCourses')}</h2><p>${lang==='es'?'Solo aparecen los cursos y estudiantes asignados a tu usuario.':'Only your assigned courses and students are shown.'}</p></div></div>${courses.map(c=>teacherSummary(c)).join('')||`<div class="empty">${t('noAssignedCourses')}</div>`}</section><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Notas y abonos de mis estudiantes':'My students’ grades and payments'}</h2><p>${lang==='es'?'Detalle por curso, estudiante y evaluación':'Details by course, student, and assessment'}</p></div></div><div class="table-card"><table class="data-table"><thead><tr><th>${t('student')} · ${t('courseYear')}</th><th>${t('assessmentName')}</th><th>${t('grades')}</th><th>${t('weightedTotal')}</th><th>${t('paid')}</th><th>${t('owed')}</th></tr></thead><tbody>${records.map(r=>`<tr>${r.map((v,i)=>`<td>${i===0||i===2?`<strong>${reportEsc(v)}</strong>`:reportEsc(v)}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="6" class="empty">${t('noAssignedCourses')}</td></tr>`}</tbody></table></div></section>`}
-function secretaryDashboard(){return `${pageHead(t('secretary'),t('secretarySubtitle'))}${stats([['♙',t('totalMembers'),'1,246',t('registered')],['✧',t('baptized'),'918','73.6%'],['♀',t('women'),'698',t('women')],['♧',t('children'),'184',lang==='es'?'menores de 13 años':'under 13 years']])}<section class="panel"><div class="panel-head"><div><h2>${t('churchOverview')}</h2><p>${lang==='es'?'Distribución de membresía por iglesia':'Membership by church'}</p></div><button class="primary" data-go="secretary">${t('generate')} →</button></div>${churchRows()}</section>`}
+function secretaryDashboard(){return `${pageHead(t('secretary'),t('secretarySubtitle'))}${stats(memberStats(members))}<section class="panel"><div class="panel-head"><div><h2>${t('churchOverview')}</h2><p>${lang==='es'?'Distribución de membresía por iglesia':'Membership by church'}</p></div><button class="primary" data-go="secretary">${t('generate')} →</button></div>${churchRows()}</section>`}
 function treasurerDashboard(){return `${pageHead(t('finance'),t('financeSubtitle'))}<div class="summary-band"><div><small>${t('income')}</small><b>$18.640.000</b></div><div><small>${t('expenses')}</small><b>$9.520.000</b></div><div><small>${t('balance')}</small><b>$9.120.000</b></div></div><section class="panel"><div class="panel-head"><div><h2>${lang==='es'?'Resumen financiero por iglesia':'Finance by church'}</h2><p>${t('dateRange')}</p></div><button class="primary" data-go="finance">${t('generate')} →</button></div><div class="table-card"><table class="data-table"><thead><tr><th>${t('churchLabel')}</th><th>${t('income')}</th><th>${t('expenses')}</th><th>${t('final')}</th></tr></thead><tbody>${churches.map((c,i)=>`<tr><td><strong>${c[0]}</strong></td><td>$${(2450000-i*260000).toLocaleString('es-CO')}</td><td>$${(1130000-i*110000).toLocaleString('es-CO')}</td><td><strong>$${(3120000+i*230000).toLocaleString('es-CO')}</strong></td></tr>`).join('')}</tbody></table></div></section>`}
 function presbyterDashboard(){return `${pageHead(`${t('hello')}, ${roles.presbitero[lang]} 👋`,lang==='es'?'Resumen general del Circuito Córdoba.':'Córdoba Circuit overview.')} ${stats([['⌂',t('totalChurches'),'12',lang==='es'?'en el circuito':'in circuit'],['♙',t('totalMembers'),'1,246',`<span class="positive">↑ 4.8%</span> ${lang==='es'?'este año':'this year'}`],['✧',t('baptized'),'918','73.6%'],['◈',t('monthlyIncome'),'$18.640.000',t('thisMonth')]])}<div class="grid-2"><section class="panel"><div class="panel-head"><div><h2>${t('churchOverview')}</h2><p>${t('dateRange')}</p></div><button class="text-link" data-go="churches">${t('viewAll')} →</button></div>${churchRows()}</section><section class="panel"><div class="panel-head"><div><h2>${t('recentActivity')}</h2><p>${lang==='es'?'Actividad del circuito':'Circuit activity'}</p></div></div>${activityRows()}</section></div>`}
 function dashboard(){if(role==='pastor')return pastorDashboard();if(role==='maestro')return teacherDashboard();if(role==='tesorero')return treasurerDashboard();if(role==='secretario')return secretaryDashboard();if(role==='presbitero')return presbyterDashboard();return `${pageHead(t('itaicAdmin'),t('itaicSubtitle'))}<section class="panel"><div class="toolbar"><button class="primary" data-go="itaic">${t('itaic')} →</button><button class="secondary" data-go="itaicFinance">${t('itaicFinance')} →</button></div></section>`}
@@ -189,11 +189,11 @@ function reportRows(kind,scope){if(kind==='finance'&&role!=='pastor'){ let ledge
   }
   function track(){
     if(restoring||!inApp())return;
-    var key=page+'|'+(selectedCourseId||'');
-    if(page==='dashboard'){stack=[{page:page,sel:null,key:key}]}
+    var key=page+'|'+(selectedCourseId||'')+'|'+assocFilter;
+    if(page==='dashboard'){stack=[{page:page,sel:null,assoc:'',key:key}]}
     else if(stack.length>1&&stack[stack.length-2].key===key){stack.pop()}
     else if(!stack.length||stack[stack.length-1].key!==key){
-      stack.push({page:page,sel:selectedCourseId||null,key:key});
+      stack.push({page:page,sel:selectedCourseId||null,assoc:assocFilter,key:key});
       if(stack.length>40)stack.shift();
     }
     sync();
@@ -211,7 +211,7 @@ function reportRows(kind,scope){if(kind==='finance'&&role!=='pastor'){ let ledge
       stack.pop();
       var prev=stack[stack.length-1];
       restoring=true;
-      try{page=prev.page;selectedCourseId=prev.sel;renderNav();renderPage()}finally{restoring=false}
+      try{page=prev.page;selectedCourseId=prev.sel;assocFilter=prev.assoc||'';renderNav();renderPage()}finally{restoring=false}
     }
     sync();
   });
@@ -466,11 +466,11 @@ function renameMemberId(oldId,newId){
 }
 function editMember(id){
   let m=members.find(x=>x.id===id);if(!m||role!=='pastor')return;
-  showModalForm(`<h2>${L('Editar miembro','Edit member')}</h2><p>${reportEsc(m.name)}</p><div class="modal-grid"><div class="field"><label>${t('name')}</label><input name="name" required value="${reportEsc(m.name)}"></div><div class="field"><label>${t('document')}</label><input name="id" required value="${reportEsc(m.id)}"></div><div class="field"><label>${t('age')}</label><input name="age" type="number" min="0" required value="${m.age}"></div><div class="field"><label>${t('sex')}</label><select name="sex"><option ${m.sex==='Femenino'?'selected':''}>Femenino</option><option ${m.sex==='Masculino'?'selected':''}>Masculino</option></select></div><div class="field"><label>${t('civil')}</label><select name="civil">${['Soltero','Casado','Unión libre','No aplica'].map(c=>`<option ${m.civil===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="field"><label>${t('baptism')}</label><select name="baptized"><option value="true" ${m.baptized?'selected':''}>${t('yes')}</option><option value="false" ${m.baptized?'':'selected'}>${t('no')}</option></select></div>${assocField(m.assoc||'')}</div>`,d=>{
+  showModalForm(`<h2>${L('Editar miembro','Edit member')}</h2><p>${reportEsc(m.name)}</p><div class="modal-grid"><div class="field"><label>${t('name')}</label><input name="name" required value="${reportEsc(m.name)}"></div><div class="field"><label>${t('document')}</label><input name="id" required value="${reportEsc(m.id)}"></div><div class="field"><label>${t('age')}</label><input name="age" type="number" min="0" required value="${m.age}"></div><div class="field"><label>${t('sex')}</label><select name="sex"><option ${m.sex==='Femenino'?'selected':''}>Femenino</option><option ${m.sex==='Masculino'?'selected':''}>Masculino</option></select></div><div class="field"><label>${t('civil')}</label><select name="civil">${['Soltero','Casado','Unión libre','No aplica'].map(c=>`<option ${m.civil===c?'selected':''}>${c}</option>`).join('')}</select></div><div class="field"><label>${t('baptism')}</label><select name="baptized"><option value="true" ${m.baptized?'selected':''}>${t('yes')}</option><option value="false" ${m.baptized?'':'selected'}>${t('no')}</option></select></div>${assocField(m.assoc||'')}</div>${studiesField(m.studies)}`,d=>{
     let name=String(d.name||'').trim(),newId=String(d.id||'').trim();if(!name||!newId)return;
     if(newId!==m.id&&members.some(x=>x.id===newId)){notify(L('Ya existe un miembro con ese documento','A member with that ID already exists'));return}
     if(newId!==m.id)renameMemberId(m.id,newId);
-    Object.assign(m,{name,id:newId,age:Number(d.age),sex:d.sex,civil:d.civil,baptized:d.baptized==='true',assoc:d.assoc||''});
+    Object.assign(m,{name,id:newId,age:Number(d.age),sex:d.sex,civil:d.civil,baptized:d.baptized==='true',assoc:d.assoc||'',studies:readStudies(document.getElementById('modalForm'))});
     notify(L('Miembro actualizado ✓','Member updated ✓'));renderPage();
   });
   wireAssocSuggestion(document.getElementById('modalForm'),true);
@@ -533,8 +533,8 @@ document.addEventListener('click',e=>{
 },true);
 
 /* ---------- Guardado en el celular (localStorage) ---------- */
-const PERSIST_KEY='aic-app-state-v1';
-const PERSIST_VARS=['members','churches','financeLedgers','itaicCourses','itaicPayments','itaicCampuses','itaicSubjects','subjectTeachers','itaicSettings','localAgeRanges','itaicEnrollmentRequests','courseAssessments','financeClosures','circuitState'];
+const PERSIST_KEY='aic-app-state-v2';
+const PERSIST_VARS=['members','churches','financeLedgers','itaicCourses','itaicPayments','itaicCampuses','itaicSubjects','subjectTeachers','itaicSettings','localAgeRanges','itaicEnrollmentRequests','courseAssessments','financeClosures','circuitState','pastorsList'];
 let persistBlocked=false;
 function persistSave(){
   if(persistBlocked)return;
@@ -758,11 +758,11 @@ function txForm(x,per){
 }
 function wireTxCategories(sel){
   let type=document.getElementById('txType'),cat=document.getElementById('txCat');
-  let fill=()=>{let list=type.value==='income'?incomeCategories:expenseCategories;cat.innerHTML=list.map(c=>`<option value="${c}" ${c===sel?'selected':''}>${categoryLabel(c)}</option>`).join('')};
+  let fill=()=>{let list=(type.value==='income'?incomeCategories:expenseCategories).filter(c=>!AUTO_CATS.includes(c));cat.innerHTML=list.map(c=>`<option value="${c}" ${c===sel?'selected':''}>${categoryLabel(c)}</option>`).join('')};
   type.onchange=()=>{sel='';fill()};fill();
 }
 function editTx(i){
-  let ledger=ensureLedger(HOME_CHURCH),x=ledger.transactions[i];if(!x||role!=='pastor')return;
+  let ledger=ensureLedger(HOME_CHURCH),x=ledger.transactions[i];if(!x||x.auto||role!=='pastor')return;
   let per=ledgerPeriod(ledger);
   showModalForm(`<h2>${L('Editar movimiento','Edit transaction')}</h2><p>${L('Periodo abierto','Open period')}: ${periodLabel(per)}</p>${txForm(x,per)}`,d=>{
     let amount=Number(d.amount),date=String(d.date||'');
@@ -773,7 +773,7 @@ function editTx(i){
   wireTxCategories(x.category);
 }
 function delTx(i){
-  let ledger=ensureLedger(HOME_CHURCH),x=ledger.transactions[i];if(!x||role!=='pastor')return;
+  let ledger=ensureLedger(HOME_CHURCH),x=ledger.transactions[i];if(!x||x.auto||role!=='pastor')return;
   confirmModal(`<h2>${L('Eliminar movimiento','Delete transaction')}</h2><p>${reportEsc(x.date)} · ${categoryLabel(x.category)} · ${money(x.amount)}</p><p>${L('Solo se pueden eliminar movimientos del periodo abierto.','Only transactions of the open period can be deleted.')}</p>`,L('Eliminar','Delete'),()=>{ledger.transactions.splice(i,1);notify(L('Movimiento eliminado','Transaction deleted'));renderPage()});
 }
 function closePeriodDialog(){
@@ -961,8 +961,8 @@ function circuitPanel(){
   let years=circuitAnnualYears().slice().reverse().map(y=>{let d=circuitAnnual(y);return `<div class="church-row"><div class="church-emblem">★</div><div><b>${L('Informe general contable consolidado','Consolidated general accounting report')} · ${y}</b><small>${L('Ingresos','Income')} ${money(d.income)} · ${L('Egresos','Expenses')} ${money(d.expenses)} · ${L('Saldo final','Closing')} ${money(d.closing)}</small></div><button class="secondary" data-it5="annualReport|${y}">${L('Informe','Report')}</button></div>`}).join('');
   let yearsAny=[...new Set(names.flatMap(n=>closureData(n).closed.map(c=>c.year)))].sort(),Y=yearsAny[yearsAny.length-1],annualPend='';
   if(Y&&!circuitAnnualYears().includes(Y)){let ok=names.filter(n=>closureData(n).annual.some(a=>a.year===Y));annualPend=`<div class="notice">${L('Cierre anual','Annual closing')} ${Y}: ${ok.length} ${L('de','of')} ${names.length} ${L('iglesias lo han realizado. El consolidado anual se genera solo cuando todas lo hagan.','churches have done it. The annual consolidation is generated automatically once all do.')}</div>`}
-  let tools=pend.length||annualPend?`<details class="test-tools"><summary>${L('Herramientas de prueba','Test tools')}</summary><p class="muted">${L('Solo para probar con los datos de ejemplo: simulan que las demás iglesias hacen sus cierres.','For testing with sample data only: they simulate the other churches closing.')}</p><div class="head-actions">${pend.length?`<button class="secondary" data-it5="simClose">${L('Simular cierre mensual de pendientes','Simulate monthly closing of pending churches')}</button>`:''}${annualPend?`<button class="secondary" data-it5="simAnnual">${L('Simular cierre anual de pendientes','Simulate annual closing of pending churches')}</button>`:''}</div></details>`:'';
-  return `<section class="panel circuit-panel"><div class="panel-head"><div><h2>${L('Cierres del circuito','Circuit closings')}</h2><p>${L('El consolidado se genera automáticamente cuando todos los pastores cierran el periodo.','The consolidation is generated automatically when all pastors close the period.')}</p></div><div class="head-actions"><button class="secondary" data-it5="compare">${L('Comparar','Compare')}</button></div></div>${circuitNoticeHtml()}<div class="eyebrow-line">${L('PERIODO EN CIERRE','PERIOD IN PROGRESS')} · ${periodLabel(P).toUpperCase()} · ${done.length} ${L('DE','OF')} ${names.length}</div>${names.map(n=>chip(n,done.includes(n))).join('')}${annualPend}<div class="eyebrow-line" style="margin-top:14px">${L('CIERRES MENSUALES CONSOLIDADOS','CONSOLIDATED MONTHLY CLOSINGS')}</div>${months}${years?`<div class="eyebrow-line" style="margin-top:14px">${L('CIERRES ANUALES CONSOLIDADOS','CONSOLIDATED ANNUAL CLOSINGS')}</div>${years}`:''}${role==='tesorero'?tools:''}</section>`;
+  let tools='';
+  return `<section class="panel circuit-panel"><div class="panel-head"><div><h2>${L('Cierres del circuito','Circuit closings')}</h2><p>${L('El consolidado se genera automáticamente cuando todos los pastores cierran el periodo.','The consolidation is generated automatically when all pastors close the period.')}</p></div><div class="head-actions"><button class="secondary" data-it5="compare">${L('Comparar','Compare')}</button></div></div>${circuitNoticeHtml()}<div class="eyebrow-line">${L('PERIODO EN CIERRE','PERIOD IN PROGRESS')} · ${periodLabel(P).toUpperCase()} · ${done.length} ${L('DE','OF')} ${names.length}</div>${names.map(n=>chip(n,done.includes(n))).join('')}${annualPend}<div class="eyebrow-line" style="margin-top:14px">${L('CIERRES MENSUALES CONSOLIDADOS','CONSOLIDATED MONTHLY CLOSINGS')}</div>${months}${years?`<div class="eyebrow-line" style="margin-top:14px">${L('CIERRES ANUALES CONSOLIDADOS','CONSOLIDATED ANNUAL CLOSINGS')}</div>${years}`:''}</section>`;
 }
 function openCircuitCompare(){
   let mp=circuitPeriods(),yrs=[...new Set(mp.map(P=>P.slice(0,4)))],st={mode:'m',a:'',b:''};
@@ -984,14 +984,6 @@ function openCircuitCompare(){
   $('#cmpB').onchange=e=>{st.b=e.target.value;refresh()};
   $$('[data-report-format]').forEach(b=>b.onclick=()=>exportFormalReport('circuit-compare-finance',scope(),b.dataset.reportFormat));
   refresh();
-}
-function simulateMonthlyClose(){
-  let P=circuitWorkingPeriod();
-  circuitNames().forEach(n=>{let l=ensureLedger(n);if(ledgerPeriod(l)===P)doClosePeriod(n)});
-}
-function simulateAnnualClose(){
-  let yearsAny=[...new Set(circuitNames().flatMap(n=>closureData(n).closed.map(c=>c.year)))].sort(),Y=yearsAny[yearsAny.length-1];if(!Y)return;
-  circuitNames().forEach(n=>{let cd=closureData(n);if(cd.closed.some(c=>c.year===Y)&&!cd.annual.some(a=>a.year===Y))doAnnualClose(n,Y)});
 }
 
 /* ---------- Integración con las pantallas ---------- */
@@ -1017,6 +1009,439 @@ document.addEventListener('click',e=>{
     let key=a.slice(1).join('|'),n=circuitNotices().find(x=>x.key===key);
     if(n){circuitState.seen.push(key);renderPage();openPlainReport(n.kind,n.scope,reportTitleFor(n.kind,n.scope,''))}
   }
-  else if(act==='simClose'&&role==='tesorero'){simulateMonthlyClose();renderPage()}
-  else if(act==='simAnnual'&&role==='tesorero'){simulateAnnualClose();renderPage()}
 },true);
+
+/* ===================== Entrega 6: Secretaría por asociaciones, cifras dinámicas y año de ejemplo ===================== */
+function assocLabel(code){let a=assocList().find(x=>x[0]===code);return a?a[1]:''}
+const assocTitle=code=>code?`${code} — ${assocLabel(code)}`:L('Todas las asociaciones','All associations');
+let churchFilter='';
+function scopeMembers(){return role==='pastor'?members.filter(m=>m.church===HOME_CHURCH):members.filter(m=>!churchFilter||m.church===churchFilter)}
+function memberStats(list){
+  let b=list.filter(m=>m.baptized).length,w=list.filter(m=>m.sex==='Femenino').length,k=list.filter(m=>m.age<13).length;
+  return [['♙',t('totalMembers'),list.length,t('registered')],['✧',t('baptized'),b,list.length?(b/list.length*100).toFixed(1)+'%':'0%'],['♀',t('women'),w,t('women')],['♧',t('children'),k,L('menores de 13 años','under 13 years')]];
+}
+function churchDetailStats(c){
+  let list=members.filter(m=>m.church===c[0]),b=list.filter(m=>m.baptized).length,l=ensureLedger(c[0]);
+  return [['♙',t('totalMembers'),list.length,t('registered')],['✧',t('baptized'),b,list.length?(b/list.length*100).toFixed(0)+'%':'0%'],['◈',t('balance'),money(ledgerTotals(l).closing),periodLabel(ledgerPeriod(l))],['♙',t('pastorLabel'),c[2],'']];
+}
+function syncChurchCounts(){churches.forEach(c=>{c[3]=String(members.filter(m=>m.church===c[0]).length)})}
+function syncMemberDates(){members.forEach(m=>{if(!m.createdAt)m.createdAt=new Date().toISOString()})}
+['es','en'].forEach(l=>Object.defineProperty(I[l],'dateRange',{configurable:true,enumerable:true,get(){let y=circuitWorkingPeriod().slice(0,4);return l==='es'?`Periodo: enero – diciembre ${y}`:`Period: January – December ${y}`}}));
+function studentCsvRows(){
+  let rows=[['Estudiante',t('churchLabel'),t('grades'),t('itaic')]];
+  itaicCourses.forEach(c=>c.students.forEach(id=>{
+    let m=members.find(x=>x.id===id),secs=sections().filter(x=>x.year===c.year&&x.campus===c.campus&&x.students.includes(id)),avg=secs.length?(secs.reduce((n,x)=>n+weightedTotal(x,id),0)/secs.length).toFixed(1):'—';
+    rows.push([m?m.name:id,m?m.church:'',avg,t(c.year)]);
+  }));
+  return rows;
+}
+
+/* ---------- Asociación obligatoria al registrar o editar miembros ---------- */
+assocField=function(sel){return `<div class="field"><label>${L('Asociación','Association')} *</label><select name="assoc" required><option value="">${L('Selecciona la asociación','Select the association')}</option>${assocList().map(a=>`<option value="${a[0]}" ${sel===a[0]?'selected':''}>${a[0]} · ${a[1]}</option>`).join('')}</select></div>`};
+let baseOpenModalE6=openModal;
+openModal=function(type){
+  baseOpenModalE6.apply(this,arguments);
+  if(type==='member'&&role==='pastor'){
+    let form=document.getElementById('modalForm');
+    if(form){let prev=form.onsubmit;form.onsubmit=function(e){let sel=form.querySelector('[name=assoc]');if(sel&&!sel.value){e.preventDefault();notify(L('Selecciona la asociación del miembro','Select the member’s association'));return false}return prev?prev.call(this,e):undefined}}
+  }
+};
+let baseEditMemberE6=editMember;
+editMember=function(id){
+  baseEditMemberE6.apply(this,arguments);
+  let form=document.getElementById('modalForm');
+  if(form){let prev=form.onsubmit;form.onsubmit=function(e){let sel=form.querySelector('[name=assoc]');if(sel&&!sel.value){e.preventDefault();notify(L('Selecciona la asociación del miembro','Select the member’s association'));return false}return prev?prev.call(this,e):undefined}}
+};
+
+/* ---------- Página de Secretaría ---------- */
+memberRows=function(){
+  let circuit=role!=='pastor',can=role==='pastor',q=filter.toLowerCase();
+  let data=scopeMembers().filter(m=>`${m.name} ${m.id}`.toLowerCase().includes(q)&&(!assocFilter||m.assoc===assocFilter));
+  return data.map(m=>`<tr><td><div class="person-cell"><span class="mini-avatar">${reportEsc(m.name.split(' ').map(x=>x[0]).slice(0,2).join(''))}</span><strong>${reportEsc(m.name)}</strong></div></td><td>${reportEsc(m.id)}</td><td>${m.age}</td><td>${m.sex}</td><td>${m.civil}</td>${circuit?`<td>${reportEsc(m.church)}</td>`:''}<td>${m.assoc?`<span class="assoc-badge">${m.assoc}</span>`:'<span class="muted">—</span>'}</td><td><span class="status ${m.baptized?'':'pending'}">${m.baptized?t('yes'):t('no')}</span></td><td><button class="inline-actions" data-it7="viewMember|${reportEsc(m.id)}" title="${L('Ver detalle','View details')}">ⓘ</button>${can?`<button class="inline-actions" data-it3="editMember|${reportEsc(m.id)}" title="${L('Editar','Edit')}">✎</button>`:''}</td></tr>`).join('')||`<tr><td colspan="${circuit?9:8}" class="empty">${t('empty')}</td></tr>`;
+};
+secretaryPage=function(){
+  let af=assocFilter,circuit=role!=='pastor',scoped=scopeMembers(),inA=af?scoped.filter(m=>m.assoc===af):scoped;
+  let place=circuit?(churchFilter||L('Todas las iglesias','All churches')):HOME_CHURCH;
+  let actions=`${role==='pastor'?`<button class="primary" data-modal="member">＋ ${t('addMember')}</button>`:''}<button class="secondary" data-it6="assocReport">${t('generate')} →</button>`;
+  let cards=af?'':`<section class="panel"><div class="panel-head"><div><h2>${L('Miembros por asociación','Members by association')}</h2><p>${reportEsc(place)}</p></div></div><div class="assoc-cards">${assocList().map(a=>`<button type="button" class="assoc-card" data-it6="goAssoc|${a[0]}"><b>${scoped.filter(m=>m.assoc===a[0]).length}</b><span>${a[0]}</span><small>${a[1]}</small></button>`).join('')}</div></section>`;
+  let churchSel=circuit?`<select id="churchFilterSel" class="filter"><option value="">${t('allChurches')}</option>${churches.map(c=>`<option ${churchFilter===c[0]?'selected':''}>${reportEsc(c[0])}</option>`).join('')}</select>`:'';
+  return `${pageHead(t('secretary')+(af?' · '+af:''),af?`${assocLabel(af)} · ${reportEsc(place)}`:t('secretarySubtitle'),actions)}${stats(memberStats(inA))}${cards}<section class="table-card"><div class="table-tools"><div class="search"><input id="memberSearch" placeholder="${L('Buscar por nombre o documento','Search by name or ID')}" value="${reportEsc(filter||'')}"></div>${churchSel}</div><table class="data-table"><thead><tr><th>${L('Miembro','Member')}</th><th>${t('document')}</th><th>${t('age')}</th><th>${t('sex')}</th><th>${t('civil')}</th>${circuit?`<th>${L('Iglesia','Church')}</th>`:''}<th>${L('Asociación','Association')}</th><th>${t('baptism')}</th><th></th></tr></thead><tbody id="memberRows">${memberRows()}</tbody></table></section>`;
+};
+
+/* ---------- Informe de miembros por asociación ---------- */
+function assocReportRows(code,church){
+  let circuit=role!=='pastor';
+  let list=members.filter(m=>(circuit?(!church||m.church===church):m.church===HOME_CHURCH)&&(!code||m.assoc===code)).sort((a,b)=>a.church.localeCompare(b.church)||a.name.localeCompare(b.name));
+  let head=[L('Nombre','Name'),L('Documento','ID'),L('Edad','Age'),L('Sexo','Sex'),L('Estado civil','Marital status'),L('Bautizado','Baptized')];
+  if(!code)head.push(L('Asociación','Association'));
+  if(circuit)head.push(L('Iglesia','Church'));
+  let rows=[head].concat(list.map(m=>{let r=[m.name,m.id,m.age,m.sex,m.civil,m.baptized?t('yes'):t('no')];if(!code)r.push(m.assoc||'—');if(circuit)r.push(m.church);return r}));
+  let pad=(label,n)=>{let r=Array(head.length).fill('');r[0]=label;r[head.length-1]=String(n);return r};
+  if(circuit&&!church){let by={};list.forEach(m=>{by[m.church]=(by[m.church]||0)+1});Object.keys(by).forEach(c=>rows.push(pad('Subtotal · '+c,by[c])))}
+  rows.push(pad(L('Total de miembros','Total members'),list.length));
+  return rows;
+}
+let baseReportRowsE6=reportRows;
+reportRows=function(kind,scope){
+  if(kind!=='assoc-members')return baseReportRowsE6.apply(this,arguments);
+  let a=String(scope).split('|');return assocReportRows(a[0],a[1]||'');
+};
+let baseReportHeaderE6=reportHeader;
+reportHeader=function(kind,scope){
+  if(kind!=='assoc-members')return baseReportHeaderE6.apply(this,arguments);
+  let a=String(scope).split('|'),place=role==='pastor'?HOME_CHURCH:(a[1]||L('Circuito','Circuit'));
+  return [t('headerAic'),t('headerCircuit'),`${t('secretary')} · ${assocTitle(a[0])} · ${place}`];
+};
+let baseReportTitleE6=reportTitleFor;
+reportTitleFor=function(kind,scope,fallback){
+  if(kind!=='assoc-members')return baseReportTitleE6(kind,scope,fallback);
+  let a=String(scope).split('|');
+  return `${L('Informe de miembros','Members report')} · ${assocTitle(a[0])} · ${role==='pastor'?HOME_CHURCH:(a[1]||L('Circuito','Circuit'))}`;
+};
+
+/* ---------- Menú lateral: asociaciones como subcategorías de Secretaría ---------- */
+let baseRenderNavE6=renderNav;
+renderNav=function(){
+  baseRenderNavE6.apply(this,arguments);
+  let key=role==='pastor'?'members':['secretario','presbitero'].includes(role)?'secretary':null,nav=document.getElementById('navigation');
+  if(!key||!nav)return;
+  let parent=nav.querySelector(`.nav-item[data-page="${key}"]`);if(!parent)return;
+  if(role==='pastor'&&parent.childNodes[1])parent.childNodes[1].textContent=t('secretary');
+  if(page===key&&assocFilter)parent.classList.remove('active');
+  let scoped=scopeMembers(),html=assocList().map(a=>`<button class="nav-item nav-sub ${page===key&&assocFilter===a[0]?'active':''}" data-page="${key}" data-assoc="${a[0]}"><span class="nav-icon">•</span>${a[0]}<span class="nav-count">${scoped.filter(m=>m.assoc===a[0]).length}</span></button>`).join('');
+  parent.insertAdjacentHTML('afterend',html);
+  nav.querySelectorAll('.nav-sub').forEach(b=>b.onclick=()=>{page=key;selectedCourseId=null;assocFilter=b.dataset.assoc;let sb=document.getElementById('sidebar');if(sb)sb.classList.remove('open');renderNav();renderPage()});
+};
+document.getElementById('navigation').addEventListener('click',e=>{let b=e.target.closest('.nav-item');if(b&&!b.classList.contains('nav-sub'))assocFilter=''},true);
+
+/* ---------- Actividad reciente dinámica ---------- */
+activityRows=function(){
+  let ev=[];
+  members.forEach(m=>{if(m.createdAt)ev.push({ts:m.createdAt,icon:'＋',title:L('Nuevo miembro registrado','New member registered'),sub:`${m.church} · ${m.name}`})});
+  Object.keys(financeClosures).forEach(ch=>{let cd=closureData(ch);
+    cd.closed.forEach(c=>ev.push({ts:c.closedAt,icon:'◈',title:L('Periodo cerrado','Period closed'),sub:`${ch} · ${periodLabel(c.id)}`}));
+    cd.annual.forEach(a=>ev.push({ts:a.createdAt,icon:'★',title:L('Cierre anual','Annual closing'),sub:`${ch} · ${a.year}`}));
+    cd.requests.forEach(r=>ev.push({ts:r.decidedAt||r.requestedAt,icon:'↺',title:r.status==='pending'?L('Reapertura solicitada','Reopening requested'):r.status==='approved'?L('Reapertura aprobada','Reopening approved'):L('Reapertura rechazada','Reopening rejected'),sub:`${r.church} · ${periodLabel(r.periodId)}`}))});
+  ev.sort((a,b)=>String(b.ts).localeCompare(String(a.ts)));
+  let fmt=ts=>new Date(ts).toLocaleDateString(lang==='es'?'es-CO':'en-US',{day:'numeric',month:'short'});
+  return `<div class="activity">${ev.slice(0,5).map(e=>`<div class="activity-row"><div class="activity-dot">${e.icon}</div><div><b>${e.title}</b><small>${reportEsc(e.sub)}</small></div><time>${fmt(e.ts)}</time></div>`).join('')||`<div class="empty">${t('empty')}</div>`}</div>`;
+};
+
+/* ---------- Integración: render, clics y filtros ---------- */
+let baseRenderPageE6=renderPage;
+renderPage=function(){
+  if(!['secretary','members'].includes(page))assocFilter='';
+  syncChurchCounts();syncMemberDates();
+  let r=baseRenderPageE6.apply(this,arguments);
+  if(['secretario','presbitero','pastor'].includes(role)&&document.getElementById('navigation'))renderNav();
+  return r;
+};
+document.addEventListener('click',e=>{
+  let el=e.target.closest('[data-it6]');if(!el)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  let a=el.dataset.it6.split('|');
+  if(a[0]==='goAssoc'){assocFilter=a[1];renderNav();renderPage()}
+  else if(a[0]==='assocReport'){let sc=`${assocFilter}|${role==='pastor'?'':churchFilter}`;openPlainReport('assoc-members',sc,reportTitleFor('assoc-members',sc,''))}
+},true);
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='churchFilterSel'){churchFilter=e.target.value;renderPage()}},true);
+
+/* ---------- Año de ejemplo (2026): datos propios, 12 meses ---------- */
+function seedDemoData(){
+  let seed=20260101;const rnd=()=>{seed=(seed*1664525+1013904223)%4294967296;return seed/4294967296};
+  const pick=(a,b)=>Math.round((a+(b-a)*rnd())/1000)*1000;
+  const pad2=n=>String(n).padStart(2,'0');
+  const empty=o=>Object.keys(o).forEach(k=>delete o[k]);
+  /* Iglesias y miembros */
+  churches.length=0;
+  [['Iglesia Central','Calle 15 # 8-42 · Montería','Pr. José Martínez'],['Iglesia Betania','Carrera 6 # 32-18 · Montería','Pr. David López'],['Iglesia El Redentor','Calle 41 # 12-05 · Cereté','Pr. Samuel Ríos'],['Iglesia Nueva Vida','Carrera 9 # 20-33 · Lorica','Pr. Andrés Pérez']].forEach(c=>churches.push([c[0],c[1],c[2],'0']));
+  const roster=[
+   ['Iglesia Central',[['Ana Lucía Ríos',34,'Femenino','Casado',true],['Carlos Mario Ortega',45,'Masculino','Casado',true],['María Fernanda Gómez',24,'Femenino','Soltero',true],['Juan Sebastián Díaz',13,'Masculino','Soltero',false],['Laura Valentina Pérez',7,'Femenino','No aplica',false],['Luis Alberto Mendoza',22,'Masculino','Soltero',true]]],
+   ['Iglesia Betania',[['Rosa Elena Martínez',52,'Femenino','Casado',true],['Pedro Pablo Castro',38,'Masculino','Casado',true],['Daniela Andrea Suárez',19,'Femenino','Soltero',true],['Miguel Ángel Torres',12,'Masculino','Soltero',false],['Sofía Camila Vargas',6,'Femenino','No aplica',false],['Jorge Iván Salcedo',29,'Masculino','Soltero',true]]],
+   ['Iglesia El Redentor',[['Marta Lucía Herrera',47,'Femenino','Casado',true],['Andrés Felipe Cogollo',31,'Masculino','Casado',true],['Paola Andrea Ruiz',26,'Femenino','Soltero',true],['Santiago Hoyos',10,'Masculino','Soltero',false],['Isabella Narváez',5,'Femenino','No aplica',false],['Camilo Andrés Pastrana',20,'Masculino','Soltero',true]]],
+   ['Iglesia Nueva Vida',[['Gladys Stella Berrío',58,'Femenino','Casado',true],['Wilson Darío Pacheco',43,'Masculino','Unión libre',false],['Karen Julieth Lozano',23,'Femenino','Soltero',true],['Emmanuel David Julio',14,'Masculino','Soltero',false],['Mariana Sofía Jiménez',8,'Femenino','No aplica',false],['Brayan Stiven Doria',27,'Masculino','Soltero',true]]]
+  ];
+  members.length=0;let n=0;
+  roster.forEach(r=>r[1].forEach(x=>{n++;members.push({name:x[0],id:'1.'+String(40+n*3).padStart(3,'0')+'.'+String(100+n*37).padStart(3,'0')+'.'+String(100+(n*91)%900),age:x[1],sex:x[2],civil:x[3],baptized:x[4],church:r[0],assoc:suggestAssoc(x[1],x[2],x[3]),createdAt:new Date(2026,0,5+n*13).toISOString()})}));
+  const idOf=name=>(members.find(m=>m.name===name)||{}).id;
+  /* Finanzas: 12 meses por iglesia */
+  empty(financeLedgers);empty(financeClosures);
+  const scales=[1,.8,.6,.7],opens=[1800000,1200000,800000,950000];
+  const addMonth=(ledger,m,sc,maxDay)=>{
+    const add=(type,category,description,amount,day)=>{if(day<=maxDay&&amount>0)ledger.transactions.push({type,category,description,amount,date:`2026-${pad2(m)}-${pad2(day)}`})};
+    let tithes=0,offers=0;
+    [5,12,26].forEach(d=>{let a=pick(520000*sc,880000*sc);if(d<=maxDay)tithes+=a;add('income','Diezmos','',a,d)});
+    [8,22].forEach(d=>{let a=pick(150000*sc,330000*sc);if(d<=maxDay)offers+=a;add('income','Ofrendas','',a,d)});
+    if(m%3===1)add('income','Primicias','',pick(100000*sc,240000*sc),15);
+    if(m%4===0||m===6)add('income','Actividades','Actividad congregacional',pick(220000*sc,460000*sc),20);
+    if(m%5===0)add('income','Otros','Ingreso extraordinario',pick(90000*sc,180000*sc),18);
+    add('expense','Servicios públicos','',pick(150000*sc,230000*sc),10);
+    add('expense','Pago pastor','',Math.round(900000*sc/1000)*1000,28);
+    add('expense','Implementos de limpieza','',pick(40000*sc,90000*sc),18);
+    if(m%2===0)add('expense','Mantenimiento de equipos','',pick(60000*sc,120000*sc),14);
+    if(m===3)add('expense','Remodelación','Pintura y adecuación del templo',Math.round(450000*sc/1000)*1000,16);
+    if(m===7)add('expense','Muebles','Sillas nuevas',Math.round(300000*sc/1000)*1000,21);
+    if(m===10)add('expense','Compra de equipos','Equipo de sonido',Math.round(380000*sc/1000)*1000,12);
+  };
+  const stamp=(plan,k)=>new Date(Math.min(plan,Date.now()-k*3600000)).toISOString();
+  churches.forEach((c,ci)=>{
+    let name=c[0],lastClosed=ci===0?11:12,ledger=financeLedgers[name]={church:name,opening:opens[ci],transactions:[],period:'2026-01'};
+    for(let m=1;m<=12;m++){
+      ledger.period='2026-'+pad2(m);
+      addMonth(ledger,m,scales[ci],m<=lastClosed?28:15);
+      if(m<=lastClosed){doClosePeriod(name);let cl=closureData(name).closed;cl[cl.length-1].closedAt=stamp(new Date(2026,m,2,10,0).getTime(),14-m)}
+    }
+    if(ci>0){doAnnualClose(name,2026);let an=closureData(name).annual;an[an.length-1].createdAt=stamp(new Date(2027,0,6,10,0).getTime(),1)}
+  });
+  circuitState.seen=circuitPeriods().map(circuitKey);
+  /* ITAIC */
+  itaicCampuses.length=0;itaicCampuses.push('Sede Central','Sede Betania');
+  itaicSubjects.length=0;
+  [['year1',['Introducción a la Biblia','Doctrina Cristiana']],['year2',['Hermenéutica','Historia de la Iglesia']],['year3',['Teología Sistemática','Homilética']]].forEach(y=>y[1].forEach((name,i)=>itaicSubjects.push({id:`sub-${y[0]}-${i+1}`,year:y[0],name})));
+  const groups=[['year1','Sede Central',['Luis Alberto Mendoza','Camilo Andrés Pastrana']],['year1','Sede Betania',['Daniela Andrea Suárez']],['year2','Sede Central',['María Fernanda Gómez']],['year2','Sede Betania',['Jorge Iván Salcedo','Karen Julieth Lozano']],['year3','Sede Central',['Paola Andrea Ruiz']],['year3','Sede Betania',['Brayan Stiven Doria','Andrés Felipe Cogollo']]];
+  itaicCourses.length=0;itaicPayments.length=0;
+  const paid=[300000,150000,300000,0,300000,150000,300000,150000,0];let pi=0;
+  groups.forEach(g=>{let ids=g[2].map(idOf);itaicCourses.push({id:`${g[0]}-${g[1]==='Sede Central'?'central':'betania'}`,year:g[0],campus:g[1],teacher:'',students:ids});ids.forEach(id=>itaicPayments.push({id,due:300000,paid:paid[pi++%paid.length]}))});
+  subjectTeachers.length=0;
+  const ana='Ana Lucía Ríos',teach={'sub-year1-1':[churches[0][2],churches[0][2]],'sub-year1-2':[ana,ana],'sub-year2-1':[churches[1][2],churches[1][2]],'sub-year2-2':[ana,churches[2][2]],'sub-year3-1':[churches[3][2],churches[3][2]],'sub-year3-2':[churches[0][2],churches[0][2]]};
+  Object.keys(teach).forEach(sid=>['Sede Central','Sede Betania'].forEach((campus,i)=>subjectTeachers.push({subjectId:sid,campus,teacher:teach[sid][i]})));
+  Object.keys(courseAssessments).forEach(k=>delete courseAssessments[k]);
+  sections().forEach(sec=>{
+    if(!sec.students.length)return;
+    let list=courseAssessments[sec.id];
+    [['Quiz 1',20],['Taller',30],['Examen final',50]].forEach((ev,ei)=>{
+      let grades={};sec.students.forEach((id,si)=>{if(ei===2&&si===sec.students.length-1&&sec.students.length>1)return;grades[id]=Math.round((3+rnd()*2)*10)/10});
+      list.push({name:ev[0],weight:ev[1],grades});
+    });
+  });
+  syncTA();
+  itaicEnrollmentRequests.length=0;
+  [['Carlos Mario Ortega','year1','Sede Central',0],['Gladys Stella Berrío','year1','Sede Betania',3]].forEach((r,i)=>itaicEnrollmentRequests.push({id:'req-demo-'+(i+1),memberId:idOf(r[0]),year:r[1],campus:r[2],church:churches[r[3]][0],pastor:churches[r[3]][2],date:'15/11/2026',status:'Pendiente'}));
+  itaicSettings.passMin=3;
+  HOME_CHURCH=churches[0][0];assocFilter='';churchFilter='';
+  syncChurchCounts();
+}
+
+/* ===================== Entrega 7: datos de pastores, estudios y edición de iglesias ===================== */
+let pastorsList=[];
+const canManagePastors=()=>['presbitero','secretario'].includes(role);
+const churchOfPastor=name=>(churches.find(c=>c[2]===name)||[])[0]||'';
+function syncPastors(){
+  churches.forEach(c=>{if(c[2]&&c[2]!=='Por asignar'&&!pastorsList.some(p=>p.name===c[2]))pastorsList.push({id:'p-'+Date.now()+'-'+pastorsList.length,name:c[2],idNumber:'',phone:'',address:'',email:'',studies:[]})});
+}
+
+/* ---------- Estudios (varios, con botón +) ---------- */
+function studyRow(x){
+  x=x||{};
+  return `<div class="study-row"><input class="s-title" placeholder="${L('Título o estudio','Title or study')}" value="${reportEsc(x.title||'')}"><input class="s-inst" placeholder="${L('Institución','Institution')}" value="${reportEsc(x.institution||'')}"><input class="s-year" type="number" min="1900" max="2100" placeholder="${L('Año','Year')}" value="${reportEsc(x.year||'')}"><button type="button" class="inline-actions" data-it7="delStudy" title="${L('Quitar','Remove')}">×</button></div>`;
+}
+function studiesField(list){
+  let rows=(list&&list.length?list:[{}]).map(studyRow).join('');
+  return `<div class="studies" data-studies><div class="studies-head"><label>${L('Estudios','Studies')}</label><button type="button" class="secondary" data-it7="addStudy">＋ ${L('Agregar estudio','Add study')}</button></div><div class="studies-list">${rows}</div></div>`;
+}
+function readStudies(form){
+  if(!form)return [];
+  return [...form.querySelectorAll('.study-row')].map(r=>({title:r.querySelector('.s-title').value.trim(),institution:r.querySelector('.s-inst').value.trim(),year:r.querySelector('.s-year').value.trim()})).filter(x=>x.title||x.institution||x.year);
+}
+const studiesText=list=>(list||[]).map(x=>[x.title,x.institution,x.year].filter(Boolean).join(' · ')).join(' | ');
+function studiesView(list){
+  return (list&&list.length)?`<ul class="studies-view">${list.map(x=>`<li><b>${reportEsc(x.title||'—')}</b><small>${reportEsc([x.institution,x.year].filter(Boolean).join(' · '))}</small></li>`).join('')}</ul>`:`<p class="muted">${L('Sin estudios registrados','No studies registered')}</p>`;
+}
+
+/* ---------- Miembros: estudios al registrar y detalle ---------- */
+let baseOpenModalE7=openModal;
+openModal=function(type){
+  baseOpenModalE7.apply(this,arguments);
+  if(type==='member'&&role==='pastor'){
+    let form=document.getElementById('modalForm'),grid=form&&form.querySelector('.modal-grid');
+    if(grid){
+      grid.insertAdjacentHTML('afterend',studiesField([]));
+      let prev=form.onsubmit;
+      form.onsubmit=function(e){let st=readStudies(form),n0=members.length,r=prev?prev.call(this,e):undefined;if(members.length>n0)members[0].studies=st;return r};
+    }
+  }
+};
+function showInfoModal(html){
+  $('#modalRoot').innerHTML=`<div class="modal-backdrop"><section class="modal">${html}<div class="modal-actions"><button type="button" class="primary" id="closeInfo">${L('Cerrar','Close')}</button></div></section></div>`;
+  $('#closeInfo').onclick=()=>$('#modalRoot').innerHTML='';
+}
+function viewMember(id){
+  let m=members.find(x=>x.id===id);if(!m)return;
+  let row=(k,v)=>`<div class="info-row"><span>${k}</span><b>${reportEsc(v||'—')}</b></div>`;
+  showInfoModal(`<h2>${reportEsc(m.name)}</h2><p>${reportEsc(m.church)}</p>${row(t('document'),m.id)}${row(t('age'),m.age)}${row(t('sex'),m.sex)}${row(t('civil'),m.civil)}${row(L('Asociación','Association'),m.assoc?`${m.assoc} · ${assocLabel(m.assoc)}`:'')}${row(t('baptism'),m.baptized?t('yes'):t('no'))}<div class="eyebrow-line" style="margin:14px 0 6px">${L('ESTUDIOS','STUDIES')}</div>${studiesView(m.studies)}`);
+}
+
+/* ---------- Pastores ---------- */
+function pastorForm(p){
+  return `<div class="modal-grid"><div class="field"><label>${t('name')} *</label><input name="name" required value="${reportEsc(p.name||'')}"></div><div class="field"><label>${L('Cédula','ID number')}</label><input name="idNumber" value="${reportEsc(p.idNumber||'')}"></div><div class="field"><label>${L('Teléfono','Phone')}</label><input name="phone" type="tel" value="${reportEsc(p.phone||'')}"></div><div class="field"><label>${L('Correo electrónico','Email')}</label><input name="email" type="email" value="${reportEsc(p.email||'')}"></div></div><div class="field"><label>${L('Dirección','Address')}</label><input name="address" value="${reportEsc(p.address||'')}"></div>${studiesField(p.studies)}`;
+}
+function pastorsPage(){
+  syncPastors();
+  let can=canManagePastors(),assigned=pastorsList.filter(p=>churchOfPastor(p.name)).length;
+  let rows=pastorsList.map(p=>`<div class="church-row pastor-row"><div class="church-emblem">♙</div><div><b>${reportEsc(p.name)}</b><small>${reportEsc(churchOfPastor(p.name)||L('Sin iglesia asignada','No church assigned'))}${p.phone?' · '+reportEsc(p.phone):''}${p.email?' · '+reportEsc(p.email):''}</small>${p.studies&&p.studies.length?`<small>${L('Estudios','Studies')}: ${reportEsc(studiesText(p.studies))}</small>`:''}</div><button class="inline-actions" data-it7="editPastor|${reportEsc(p.id)}" title="${can?L('Editar','Edit'):L('Ver','View')}">✎</button></div>`).join('');
+  return `${pageHead(t('pastors'),L('Datos de los pastores del circuito','Circuit pastors’ data'),can?`<button class="primary" data-it7="newPastor">＋ ${t('newPastor')}</button>`:'')}${stats([['♙',t('pastors'),pastorsList.length,L('registrados','registered')],['⌂',L('Con iglesia','With church'),assigned,L('asignados','assigned')],['◌',L('Sin iglesia','Unassigned'),pastorsList.length-assigned,L('disponibles','available')],['✉',L('Con correo','With email'),pastorsList.filter(p=>p.email).length,L('registrados','registered')]])}<section class="panel"><div class="panel-head"><div><h2>${t('pastors')}</h2><p>${pastorsList.length} · ${L('toca ✎ para ver o editar sus datos','tap ✎ to view or edit their data')}</p></div></div>${rows||`<div class="empty">${t('empty')}</div>`}</section>`;
+}
+let baseSimplePageE7=simplePage;
+simplePage=function(type){return type==='pastors'?pastorsPage():baseSimplePageE7.apply(this,arguments)};
+function savePastorFromForm(p,d,isNew){
+  let name=String(d.name||'').trim();if(!name)return false;
+  if(pastorsList.some(x=>x!==p&&x.name.toLowerCase()===name.toLowerCase())){notify(L('Ya existe un pastor con ese nombre','A pastor with that name already exists'));return false}
+  let old=p.name;
+  Object.assign(p,{name,idNumber:String(d.idNumber||'').trim(),phone:String(d.phone||'').trim(),email:String(d.email||'').trim(),address:String(d.address||'').trim(),studies:readStudies(document.getElementById('modalForm'))});
+  if(!isNew&&name!==old){
+    churches.forEach(c=>{if(c[2]===old)c[2]=name});
+    subjectTeachers.forEach(a=>{if(a.teacher===old)a.teacher=name});
+    itaicCourses.forEach(x=>{if(x.teacher===old)x.teacher=name});
+    itaicEnrollmentRequests.forEach(r=>{if(r.pastor===old)r.pastor=name});
+    syncTA();
+  }
+  return true;
+}
+function newPastorDialog(){
+  if(!canManagePastors())return;
+  showModalForm(`<h2>${t('newPastor')}</h2><p>${L('Después puedes asignarlo a una iglesia desde la edición de la iglesia.','You can assign him to a church later from the church edit screen.')}</p>${pastorForm({})}`,d=>{
+    let p={id:'p-'+Date.now(),name:'',idNumber:'',phone:'',address:'',email:'',studies:[]};
+    if(savePastorFromForm(p,d,true)){pastorsList.push(p);notify(L('Pastor agregado ✓','Pastor added ✓'));renderPage()}
+  });
+}
+function editPastorDialog(id){
+  let p=pastorsList.find(x=>x.id===id);if(!p)return;
+  if(!canManagePastors()){showInfoModal(`<h2>${reportEsc(p.name)}</h2><p>${reportEsc(churchOfPastor(p.name))}</p>${studiesView(p.studies)}`);return}
+  showModalForm(`<h2>${L('Datos del pastor','Pastor data')}</h2><p>${reportEsc(churchOfPastor(p.name)||L('Sin iglesia asignada','No church assigned'))}</p>${pastorForm(p)}`,d=>{
+    if(savePastorFromForm(p,d,false)){notify(L('Pastor actualizado ✓','Pastor updated ✓'));renderPage()}
+  });
+}
+
+/* ---------- Iglesias: editar conservando sus datos; el presbítero puede cambiar el pastor ---------- */
+editChurch=function(i){
+  let c=churches[i];if(!c||role!=='presbitero')return;
+  syncPastors();
+  let avail=pastorsList.filter(p=>p.name===c[2]||!churchOfPastor(p.name));
+  showModalForm(`<h2>${L('Editar iglesia','Edit church')}</h2><div class="field"><label>${t('name')}</label><input name="name" required value="${reportEsc(c[0])}"></div><div class="field"><label>${t('address')}</label><input name="address" required value="${reportEsc(c[1])}"></div><div class="field"><label>${L('Pastor asignado','Assigned pastor')}</label><select name="pastor"><option value="">${L('Por asignar','To be assigned')}</option>${avail.map(p=>`<option ${p.name===c[2]?'selected':''}>${reportEsc(p.name)}</option>`).join('')}</select></div>`,d=>{
+    let name=String(d.name||'').trim(),old=c[0];if(!name)return;
+    if(churches.some((x,j)=>j!==i&&x[0].toLowerCase()===name.toLowerCase())){notify(L('Ya existe una iglesia con ese nombre','A church with that name already exists'));return}
+    c[0]=name;c[1]=String(d.address||'').trim();c[2]=d.pastor||'Por asignar';
+    if(name!==old){
+      if(financeLedgers[old]){financeLedgers[name]=financeLedgers[old];delete financeLedgers[old];financeLedgers[name].church=name}
+      if(financeClosures[old]){financeClosures[name]=financeClosures[old];delete financeClosures[old];financeClosures[name].requests.forEach(r=>{r.church=name})}
+      members.forEach(m=>{if(m.church===old)m.church=name});
+      itaicEnrollmentRequests.forEach(r=>{if(r.church===old)r.church=name});
+      if(i===0)HOME_CHURCH=name;
+    }
+    notify(L('Iglesia actualizada ✓','Church updated ✓'));renderPage();
+  });
+};
+
+/* ---------- Clics ---------- */
+document.addEventListener('click',e=>{
+  let el=e.target.closest('[data-it7]');if(!el)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  let a=el.dataset.it7.split('|'),act=a[0];
+  if(act==='addStudy'){let list=el.closest('[data-studies]').querySelector('.studies-list');list.insertAdjacentHTML('beforeend',studyRow({}));let ins=list.querySelectorAll('.s-title');ins[ins.length-1].focus()}
+  else if(act==='delStudy'){let row=el.closest('.study-row'),list=row.parentNode;row.remove();if(!list.children.length)list.insertAdjacentHTML('beforeend',studyRow({}))}
+  else if(act==='viewMember')viewMember(a.slice(1).join('|'));
+  else if(act==='newPastor')newPastorDialog();
+  else if(act==='editPastor')editPastorDialog(a.slice(1).join('|'));
+},true);
+let baseRenderPageE7=renderPage;
+renderPage=function(){syncPastors();return baseRenderPageE7.apply(this,arguments)};
+
+/* ---------- Datos de ejemplo: pastores y estudios ---------- */
+function seedPastors(){
+  pastorsList.length=0;
+  [['Pr. José Martínez','1.067.412.558','310 456 7821','jose.martinez@iglesia.example','Calle 15 # 8-42 · Montería',[['Licenciatura en Teología','Seminario Bíblico del Caribe','2008'],['Maestría en Consejería Pastoral','Universidad Cristiana de Córdoba','2015']]],
+   ['Pr. David López','1.003.221.874','312 908 4416','david.lopez@iglesia.example','Carrera 6 # 32-18 · Montería',[['Técnico en Estudios Bíblicos','Instituto Bíblico Betania','2011']]],
+   ['Pr. Samuel Ríos','1.102.775.309','315 220 7788','samuel.rios@iglesia.example','Calle 41 # 12-05 · Cereté',[['Licenciatura en Teología','Seminario Bíblico del Caribe','2010'],['Diplomado en Liderazgo','Universidad de Córdoba','2018']]],
+   ['Pr. Andrés Pérez','1.064.118.642','318 774 3095','andres.perez@iglesia.example','Carrera 9 # 20-33 · Lorica',[['Instituto Bíblico','Instituto Bíblico del Sinú','2013']]],
+   ['Pr. Luis Fernando Gómez','1.070.556.213','301 662 9054','luis.gomez@iglesia.example','Calle 30 # 14-20 · Sahagún',[['Licenciatura en Teología','Seminario Bíblico del Caribe','2016']]]
+  ].forEach((x,i)=>pastorsList.push({id:'p-'+(i+1),name:x[0],idNumber:x[1],phone:x[2],email:x[3],address:x[4],studies:x[5].map(y=>({title:y[0],institution:y[1],year:y[2]}))}));
+  const st={'Ana Lucía Ríos':[['Licenciatura en Educación Religiosa','Universidad Cristiana de Córdoba','2016']],'Carlos Mario Ortega':[['Técnico en Contabilidad','SENA','2012']],'María Fernanda Gómez':[['Profesional en Educación Infantil','Universidad de Córdoba','2023']]};
+  members.forEach(m=>{if(st[m.name])m.studies=st[m.name].map(y=>({title:y[0],institution:y[1],year:y[2]}))});
+}
+
+/* ===================== Entrega 8: diezmos automáticos y comparación en pantalla ===================== */
+const AUTO_CATS=['Diezmo de diezmos','Diezmo de ofrendas'];
+function syncAutoTithes(ledger){
+  if(!ledger||!Array.isArray(ledger.transactions))return;
+  let manual=ledger.transactions.filter(x=>!AUTO_CATS.includes(x.category));
+  ledger.transactions.length=0;manual.forEach(x=>ledger.transactions.push(x));
+  let per=ledgerPeriod(ledger),date=`${per}-${String(lastDayOf(per)).padStart(2,'0')}`;
+  let sum=cat=>manual.filter(x=>x.type==='income'&&x.category===cat).reduce((n,x)=>n+Number(x.amount),0);
+  [['Diezmos','Diezmo de diezmos',L('10% de los diezmos','10% of tithes')],['Ofrendas','Diezmo de ofrendas',L('10% de las ofrendas','10% of offerings')]].forEach(r=>{
+    let base=sum(r[0]);
+    if(base>0)ledger.transactions.push({type:'expense',category:r[1],description:L('Calculado automáticamente · ','Automatically calculated · ')+r[2],amount:Math.round(base*0.1),date,auto:true});
+  });
+}
+let baseEnsureLedgerE8=ensureLedger;
+ensureLedger=function(church){let l=baseEnsureLedgerE8.apply(this,arguments);syncAutoTithes(l);return l};
+let baseOpenModalE8=openModal;
+openModal=function(type){
+  baseOpenModalE8.apply(this,arguments);
+  if(type==='movement'&&role==='pastor'){
+    let sel=document.querySelector('#modalForm [name=category]');
+    if(sel){
+      let autoLabels=AUTO_CATS.map(c=>categoryLabel(c));
+      let clean=()=>[...sel.options].forEach(o=>{if(AUTO_CATS.includes(o.value)||autoLabels.includes(o.textContent))o.remove()});
+      clean();new MutationObserver(clean).observe(sel,{childList:true});
+      sel.insertAdjacentHTML('afterend',`<small class="muted">${L('El diezmo de diezmos y el de ofrendas se calculan solos (10%).','Tithe of tithes and of offerings are calculated automatically (10%).')}</small>`);
+    }
+  }
+};
+
+/* ---------- Comparación: primero en pantalla, después se decide generar el informe ---------- */
+let cmpState={mode:'m',a:'',b:''};
+const compareKind=()=>role==='pastor'?'compare-finance':'circuit-compare-finance';
+function compareOptions(mode){
+  if(role==='pastor'){let cd=closureData(HOME_CHURCH);return mode==='m'?cd.closed.slice().reverse().map(c=>[c.id,periodLabel(c.id)]):closedYears(HOME_CHURCH).slice().reverse().map(y=>[String(y),String(y)])}
+  let mp=circuitPeriods();return mode==='m'?mp.slice().reverse().map(P=>[P,periodLabel(P)]):[...new Set(mp.map(P=>P.slice(0,4)))].reverse().map(y=>[y,y]);
+}
+const compareScope=()=>role==='pastor'?`${HOME_CHURCH}|${cmpState.mode}|${cmpState.a}|${cmpState.b}`:`${cmpState.mode}|${cmpState.a}|${cmpState.b}`;
+function rowsToTable(rows){
+  let head=rows[0],body=rows.slice(1);
+  return `<table class="data-table compare-table"><thead><tr>${head.map(h=>`<th>${reportEsc(h)}</th>`).join('')}</tr></thead><tbody>${body.map(r=>`<tr class="${r.length>1&&r.slice(1).every(x=>x==='')?'section-row':''}">${r.map((c,i)=>`<td class="${i?'num':''}">${reportEsc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+function comparePageHtml(){
+  let o=compareOptions(cmpState.mode),ok=o.length>1;
+  if(!o.some(x=>x[0]===cmpState.a))cmpState.a=ok?o[1][0]:(o[0]?o[0][0]:'');
+  if(!o.some(x=>x[0]===cmpState.b)||cmpState.b===cmpState.a)cmpState.b=(o.find(x=>x[0]!==cmpState.a)||[''])[0];
+  let opts=v=>o.map(x=>`<option value="${reportEsc(x[0])}" ${x[0]===v?'selected':''}>${reportEsc(x[1])}</option>`).join('');
+  let place=role==='pastor'?HOME_CHURCH:t('headerCircuit');
+  let rows=ok?reportRows(compareKind(),compareScope()):null;
+  return `${pageHead(L('Comparar periodos','Compare periods'),place,`<button class="secondary" data-it8="backFinance">← ${t('finance')}</button><button class="primary" data-it8="compareReport" ${ok?'':'disabled'}>${t('generate')} →</button>`)}<section class="panel"><div class="modal-grid"><div class="field"><label>${L('Comparación','Comparison')}</label><select id="cmpModeSel"><option value="m" ${cmpState.mode==='m'?'selected':''}>${L('Mes con mes','Month vs month')}</option><option value="y" ${cmpState.mode==='y'?'selected':''}>${L('Año con año','Year vs year')}</option></select></div><div></div><div class="field"><label>${L('Periodo base','Base period')}</label><select id="cmpASel">${opts(cmpState.a)}</select></div><div class="field"><label>${L('Comparar con','Compare with')}</label><select id="cmpBSel">${opts(cmpState.b)}</select></div></div></section>${ok?`<section class="table-card">${rowsToTable(rows)}</section>`:`<div class="empty">${L('No hay suficientes periodos para esta comparación','Not enough periods for this comparison')}</div>`}`;
+}
+function goCompare(){cmpState={mode:'m',a:'',b:''};selectedCourseId='compare';renderPage()}
+openCompare=function(church){
+  if(closureData(church).closed.length<2&&closedYears(church).length<2){notify(L('Necesitas al menos dos periodos cerrados para comparar','You need at least two closed periods to compare'));return}
+  goCompare();
+};
+openCircuitCompare=function(){
+  let mp=circuitPeriods();
+  if(mp.length<2&&new Set(mp.map(P=>P.slice(0,4))).size<2){notify(L('Necesitas al menos dos cierres consolidados para comparar','You need at least two consolidated closings to compare'));return}
+  goCompare();
+};
+let baseRenderPageE8=renderPage;
+renderPage=function(){
+  Object.values(financeLedgers).forEach(syncAutoTithes);
+  if(page!=='finance'&&selectedCourseId==='compare')selectedCourseId=null;
+  let r=baseRenderPageE8.apply(this,arguments);
+  if(page==='finance'&&selectedCourseId==='compare'&&['pastor','tesorero','presbitero'].includes(role)){let c=document.getElementById('content');if(c)c.innerHTML=comparePageHtml()}
+  return r;
+};
+document.addEventListener('click',e=>{
+  let el=e.target.closest('[data-it8]');if(!el)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  let act=el.dataset.it8;
+  if(act==='backFinance'){selectedCourseId=null;renderPage()}
+  else if(act==='compareReport'&&!el.disabled){let sc=compareScope();openPlainReport(compareKind(),sc,reportTitleFor(compareKind(),sc,''))}
+},true);
+document.addEventListener('change',e=>{
+  let id=e.target&&e.target.id;if(!['cmpModeSel','cmpASel','cmpBSel'].includes(id))return;
+  if(id==='cmpModeSel'){cmpState.mode=e.target.value;cmpState.a='';cmpState.b=''}
+  else if(id==='cmpASel')cmpState.a=e.target.value;
+  else cmpState.b=e.target.value;
+  renderPage();
+},true);
+
+/*__BOOT__*/
+/* Los datos de ejemplo se cargan al final, cuando todo el código ya está definido. Los módulos nuevos se agregan ANTES de esta línea. */
+seedDemoData();
+seedPastors();
