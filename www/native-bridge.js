@@ -75,6 +75,8 @@
 
   var MIME_BY_EXT = {
     doc: 'application/msword',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     xls: 'application/vnd.ms-excel',
     csv: 'text/csv',
     pdf: 'application/pdf',

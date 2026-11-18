@@ -131,3 +131,10 @@ textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px;
 /* ===== Entrega 8: comparación en pantalla ===== */
 .compare-table td.num{text-align:right;white-space:nowrap}
 .compare-table .section-row td{background:var(--pale);font-weight:800;color:var(--green2)}
+
+/* ===== Entrega 9: filtros previos de ITAIC ===== */
+.filter-panel{padding:14px}
+.filter-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
+.filter-bar .field{margin:0}
+.filter-bar select{width:100%}
+.plain-table .section-row td{background:var(--pale);font-weight:800;color:var(--green2)}
