@@ -138,3 +138,8 @@ textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px;
 .filter-bar .field{margin:0}
 .filter-bar select{width:100%}
 .plain-table .section-row td{background:var(--pale);font-weight:800;color:var(--green2)}
+
+/* ===== Entrega 11: selector de iglesia del pastor ===== */
+.church-switch{margin:0 0 12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--pale)}
+.church-switch>span{display:block;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.church-switch>div{display:flex;flex-wrap:wrap;gap:6px}
