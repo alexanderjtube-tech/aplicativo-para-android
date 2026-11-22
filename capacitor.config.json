@@ -2,13 +2,13 @@
   "appId": "co.aic.circuitocordoba",
   "appName": "AIC Córdoba",
   "webDir": "www",
-  "backgroundColor": "#f7f9f7",
+  "backgroundColor": "#F6F4EE",
   "server": {
     "androidScheme": "https"
   },
   "plugins": {
     "SystemBars": {
-      "style": "LIGHT"
+      "style": "DEFAULT"
     }
   }
 }
